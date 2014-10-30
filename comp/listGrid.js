@@ -74,7 +74,6 @@ Ext.define('comp.listGrid', {
 			]
 		};
 		
-		
 		var grid = this;
 		var config = {
 			border		: false,

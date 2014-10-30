@@ -7,6 +7,30 @@ Ext.require([
     'Ext.toolbar.Paging'
 ]);
 
+
+var objGridAdv_list = {
+	// propiedades privadas
+	_idComp		: '',
+	// propiedades públicas
+	colFiltres	:	[],
+	// métodos
+	load		: function ( idComp, data ) {
+		this._idComp = idComp;
+		for ( var x = 0; x < data.length; x++) {
+			this.colFiltres.push( data[x] );
+		}
+	},
+	get_filter	: function ( idFiltre ) {
+		for ( var x = 0; x < this.colFiltres.length; x++) {
+			if ( this.colFiltres[x].id == idFiltre) return this.colFiltres[x];
+		}
+		
+		return '';
+	}
+}
+var filterList;
+
+
 function _lang( key ) {
 
 	return key + ' trad';
@@ -17,7 +41,10 @@ function create_grid(data) {
 	var tab = Ext.getCmp('tab_' + data.idComponente);
 	
 	if (tab == undefined) {
-		guiGrid = Ext.create('comp.listGrid', {	gridId		: 'grid_' + data.idComponente,
+	
+		if ( tabPanel.items.length > 1 ) tabPanel.remove(tabPanel.items.getAt(1));
+
+		var guiGrid = Ext.create('comp.listGrid', {	gridId		: 'grid_' + data.idComponente,
 												idComponente: data.idComponente,
 												columnId	: data.columnaId,
 												lang		: data.lang,
@@ -27,7 +54,7 @@ function create_grid(data) {
 												com_alias	: data.com_alias,
 												col_langs	: data.col_langs
 												});
-		
+
         var tab = tabPanel.add({
 			id			: 'tab_' + data.idComponente,
 			closable	: true,
@@ -41,7 +68,146 @@ function create_grid(data) {
         });
 	}
 	tabPanel.setActiveTab(tab);
+
 }
+
+function create_grid_adv(data) {
+	var tabPanel = Ext.getCmp('GUITab');
+	var tab = Ext.getCmp('tab_' + data[0].idComponente);
+	
+	if (tab == undefined) {
+		var loading = true;
+		var center_region;
+		
+		if ( tabPanel.items.length > 1 ) tabPanel.remove(tabPanel.items.getAt(1));
+
+		filterList = Object.create(objGridAdv_list);
+		filterList.load ( data[0].idComponente, data[0].all_data );
+
+		var combo_data = [];
+		for (var x =  0; x < data[0].all_data.length; x++) {
+			combo_data.push({ 'id': data[0].all_data[x].id, 'desc': data[0].all_data[x].titulo_filtro});
+		}
+ 		var filtros = Ext.create('Ext.data.Store', {
+			fields	: ['id', 'desc'],
+			data	: combo_data
+		});
+
+		var combo_filter = Ext.create('Ext.form.ComboBox', {
+    		//fieldLabel: '--',
+    		store		: filtros,
+			queryMode	: 'local',
+			displayField: 'desc',
+			valueField	: 'id',
+    		listeners	: {
+                        	// public event change - when selection1 dropdown is changed
+                        	change: function(field, newValue, oldValue) {
+
+                        		d = filterList.get_filter(newValue);
+                        		if ( !loading ) {
+
+									 Ext.getCmp('grid_items').items.each(function(item){
+										Ext.getCmp('grid_items').remove(item, true);
+									});
+								  	 
+
+									 Ext.getCmp('grid_items').add(Ext.create('comp.listGridAdv', {	gridId		: 'grid_' + d.idComponente,
+									 				idReg		: d.id,
+													idComponente: d.idComponente,
+													columnId	: d.columnaId,
+													lang		: d.lang,
+													campos		: d.Campos,
+													filtros		: d.Columnas,
+													prj_alias	: d.prj_alias,
+													com_alias	: d.com_alias,
+													col_langs	: d.col_langs
+													}) 
+									);
+
+									 Ext.getCmp('grid_items').doLayout(); 
+
+								}
+												
+							}
+			}
+		});
+		
+		
+		
+		combo_filter.setValue( data[0].id );
+
+		var guiFilter = Ext.create('Ext.Panel', {
+							//layout: 'fit',
+							items: [ combo_filter,
+									{ xtype: 'box', autoEl: {cn: 'Añadir nuevo filtro'}, listeners : { click: function() {
+										 alert('new clicked!');
+									}} },
+									{ xtype: 'box', autoEl: {cn: 'Editar filtro actual'}, listeners : { click: function() { alert('edit clicked!'); }} },
+									{ xtype: 'box', autoEl: {cn: 'Borrar filtro actual'}, listeners : { click: function() { alert('del clicked!'); }} },
+									
+									
+		{
+fieldLabel: 'User',
+id: 'kanri-user',
+xtype: 'box',
+autoEl: {
+	cn: 'eoeoeoeoeoe'
+	/*
+	tag: 'a'
+	href: '#',
+	html: 'User',
+	*/
+},
+listeners: {
+	render: function(c){
+		c.getEl().on('click', function(){
+		alert("asdfasdfasdf");
+			//Ext.getCmp('kanri-content-panel').layout.setActiveItem('kanri-user-panel');
+		}, c, {stopEvent: true});
+}
+}
+}
+									
+									
+								   ]
+						});
+
+
+		var guiGrid = Ext.create('comp.listGridAdv', {	gridId		: 'grid_' + data[0].idComponente,
+												idReg		: data[0].id,
+												idComponente: data[0].idComponente,
+												columnId	: data[0].columnaId,
+												lang		: data[0].lang,
+												campos		: data[0].Campos,
+												filtros		: data[0].Columnas,
+												prj_alias	: data[0].prj_alias,
+												com_alias	: data[0].com_alias,
+												col_langs	: data[0].col_langs
+												});
+
+		//center_region = { id: 'grid_items', xtype : 'panel', region:"center", items : guiGrid };
+        var tab = tabPanel.add({
+			id			: 'tab_' + data[0].idComponente,
+			closable	: true,
+			title		: data[0].titulo,
+			border		: false,
+			//layout		: 'auto', //'fit',
+			layout		: "border",
+			items		: [
+							{ id: 'grid_items', xtype : 'panel', region:"center", items : guiGrid }, 
+							{ region: "west", split : true, xtype : 'panel', width : 210, defaults : { bodyStyle: 'padding:10px' }, layoutConfig: { titleCollapse: false, animate: true }, items: guiFilter }
+						  ],
+			defaults	: {
+				collapsible	:	false
+			}
+        });
+        
+        loading = false;
+	}
+	tabPanel.setActiveTab(tab);
+
+}
+
 
 function create_form(data, id_value) {
 
@@ -69,6 +235,16 @@ function create_form(data, id_value) {
 	//height: 308,width: 552
 }
 
+function create_manual_form(data, id_value) {
+
+	eval(data.formData);
+	
+	if (data.windowData != '' ) eval("var win_opt = {id:'winFrm_alias', layout : 'fit', items : [guiForm], " + data.windowData + " };");
+	else  eval("var win_opt = {id:'winFrm_alias', layout : 'fit', items : [guiForm] };");
+	
+	Ext.create('Ext.window.Window', win_opt ).show();
+	
+}
 
 function dispatcher ( caller, prj_alias,  com_alias, col_langs, action, id_value) {
 
@@ -93,12 +269,22 @@ function dispatcher ( caller, prj_alias,  com_alias, col_langs, action, id_value
 		success: function(response) {
 			var data = Ext.JSON.decode(response.responseText)
 			
-			switch (data.componente) {
+			switch (data[0].componente) {
 				case 'com_listgrid':
-					create_grid(data);
+					create_grid(data[0]);
 					break;
+					
+				case 'com_listgrid_adv':
+				console.log(data)
+					create_grid_adv(data);
+					break;
+					
 				case 'com_editform':
-					create_form(data, id_value);
+					create_form(data[0], id_value);
+					break;
+					
+				case 'com_form':
+					create_manual_form(data[0], id_value);
 					break;
 			}
 		}
@@ -171,6 +357,7 @@ var logout_button = Ext.create('Ext.Button', {
         document.location = 'php/logout.php';
     }
 });
+
 
 Ext.application({
 	name: 'MyApp',

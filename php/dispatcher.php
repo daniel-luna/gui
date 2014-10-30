@@ -21,32 +21,53 @@
 		
 		$alias = $row['alias'];
 		$query	= "SELECT * FROM " . $componente . " WHERE idComponente = '" . $row['id'] . "'";
+		//if ($componente == 'com_listgrid_adv') $query .= " AND porDefecto = 1";
 
+		$row_arr = array();
 		$result	= mysql_query($query, $enlace);
 		if ( mysql_num_rows($result) > 0) {
-			$row = mysql_fetch_assoc($result);
-			foreach ( $row as $key=>$value )
+		
+			//$row = mysql_fetch_assoc($result);
+			$primero = 1;
+			while ( $row = mysql_fetch_assoc($result) )
 			{
-				$row[$key] = str_replace("{lang}", $_POST['lang'], $value);
-				
-				if ($key == 'titulo') $row[$key] = get_locale ($alias, $value, $_POST['lang']);
-				if ($key == 'Columnas' ) {
-					$arr = json_decode($value);
-					foreach ( $arr as $iterator) {
-						if (isset($iterator->text) && $iterator->text != '') $iterator->text = get_locale ($alias, $iterator->text, $_POST['lang']);
-					}
-					$row[$key] = json_encode($arr);
-				}
-			}
-			$row['idComponente'] = $row['idComponente'];
-			$row['lang'] = $_POST['lang'];
-			$row['prj_alias'] = $alias;
-			$row['com_alias'] = $component;
-			$row['col_langs'] = array('user_lang'=>$_POST['lang'], 'col_lang'=>$_POST['col_langs']);
-			$row['componente'] = $componente;
-			$row['res'] = 'success';
+
+				foreach ( $row as $key=>$value )
+				{
+					$row[$key] = str_replace("{lang}", $_POST['lang'], $value);
 			
-			echo json_encode($row);
+					if ($key == 'titulo') $row[$key] = get_locale ($alias, $value, $_POST['lang']);
+					if ($key == 'Columnas' ) {
+						$arr = json_decode($value);
+						foreach ( $arr as $iterator) {
+							if (isset($iterator->text) && $iterator->text != '') $iterator->text = get_locale ($alias, $iterator->text, $_POST['lang']);
+						}
+						$row[$key] = json_encode($arr);
+					}
+				}
+				unset($row['sSQL']); unset($row['sSelect']); unset($row['sFrom']); unset($row['sWhere']);
+				
+				$row['all_data'][] = $row;
+				
+				if ( $primero == 1 )
+				{
+					$row['idComponente'] = $row['idComponente'];
+					$row['lang'] = $_POST['lang'];
+					$row['prj_alias'] = $alias;
+					$row['com_alias'] = $component;
+					$row['col_langs'] = array('user_lang'=>$_POST['lang'], 'col_lang'=>$_POST['col_langs']);
+					$row['componente'] = $componente;
+					$row['res'] = 'success';
+					
+					$row_arr[] = $row;
+				} else {
+					$row_arr[0]['all_data'][] = $row;
+				}
+				$primero = 0;
+				
+			}
+			
+			echo json_encode($row_arr);
 			exit();
 		}
 	}

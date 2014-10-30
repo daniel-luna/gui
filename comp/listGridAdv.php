@@ -8,16 +8,14 @@
 	@mysql_query ("SET NAMES 'utf8'");
 
 
-	$query	= "SELECT * FROM com_listgrid WHERE idComponente = '" . $_REQUEST['id'] . "'";
+	$query	= "SELECT * FROM com_listgrid_adv WHERE idComponente = '" . $_REQUEST['id'] . "' AND id = '" . $_REQUEST['idReg'] . "'";
 	$result	= mysql_query($query, $enlace);
 	if ( mysql_num_rows($result) > 0) {
 		
 		$it = mysql_fetch_assoc($result);
-		$query = str_replace("{lang}", $_REQUEST['lang'], $it['sSQL']);
+		$query = str_replace("{lang}", $_REQUEST['lang'], $it['sSelect'] . ' ' . $it['sFrom'] . ' ' . $it['sWhere']);
 			
 		if (isset($_GET['filter'])) {
-			
-			//eval('$trad = array(' . $it['mapeadoPHP'] . ');');
 
 			$comparision = array( 'eq' => '=', 'gt' => '>', 'lt' => '<' );
 			$sWhr = "";
@@ -25,18 +23,12 @@
 			{
 
 				if ( $filter['data']['type'] == 'string')
-					//$sWhr .= " AND " . $trad[$filter['field']] . " LIKE '%" . $filter['data']['value'] . "%'" ;
 					$sWhr .= " AND " . $filter['field'] . " LIKE '%" . $filter['data']['value'] . "%'" ;
 					
 				if ( $filter['data']['type'] == 'numeric')
-					//$sWhr .= " AND " . $trad[$filter['field']] . " " . $comparision[$filter['data']['comparison']] . "'" . $filter['data']['value'] . "'" ;
 					$sWhr .= " AND " . $filter['field'] . " " . $comparision[$filter['data']['comparison']] . "'" . $filter['data']['value'] . "'" ;
 					
 				if ( $filter['data']['type'] == 'date') {
-					//if ($filter['data']['value'] != '') {
-					//	$date_value = date("Y-m-d", strtotime($filter['data']['value']));
-					//	$sWhr .= " AND " . $trad[$filter['field']] . " " . $comparision[$filter['data']['comparison']] . "'$date_value'" ;
-					//}
 					if ($filter['data']['value'] != '') {
 						$date_value = date("Y-m-d", strtotime($filter['data']['value']));
 						$sWhr .= " AND " . $filter['field'] . " " . $comparision[$filter['data']['comparison']] . "'$date_value'" ;
@@ -49,8 +41,8 @@
 			
 			
 		}
-
-		$row['sql'] = $query;
+		// SOLO PARA DEBUG!!!!!
+		$row['sql'] = ' DEBUG MODE - ' . $query;
 		
 		$result	= mysql_query($query, $enlace);
 		if ( mysql_num_rows($result) > 0) {
