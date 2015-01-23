@@ -1,31 +1,80 @@
-//Ext.Loader.setConfig({enabled: true});
+Ext.Loader.setConfig({enabled: true});
 Ext.Loader.setPath('Ext.ux', 'extjs/src/ux');
 Ext.require([
+	//grid
     'Ext.grid.*',
     'Ext.data.*',
     'Ext.ux.grid.FiltersFeature',
-    'Ext.toolbar.Paging'
+    'Ext.toolbar.Paging',
+    //multiselect / item-selector
+    'Ext.form.Panel',
+    'Ext.ux.form.MultiSelect',
+    'Ext.ux.form.ItemSelector',
+    'Ext.tip.QuickTipManager',
+    'Ext.ux.ajax.JsonSimlet',
+    'Ext.ux.ajax.SimManager'
 ]);
+
 
 
 var objGridAdv_list = {
 	// propiedades privadas
 	_idComp		: '',
+	_idCurrentFilter : 0,
 	// propiedades públicas
 	colFiltres	:	[],
 	// métodos
-	load		: function ( idComp, data ) {
+	get_currentFilter	: function() {
+		return this._idCurrentFilter;
+	},
+	set_currentFilter	: function ( current ) {
+		this._idCurrentFilter = current;
+	},
+	ajax_call	: function () {
+		//params, okCallback, errCallback
+		$.ajax({
+			data			: params.url_params,
+			dataType		: 'json', //(objConfig.localhost ? 'json' : 'jsonp'), 
+			jsonpCallback	: 'callbackResp',
+			url				: params.url,
+			success : function (callbackResp) {
+				okCallback(callbackResp);
+			},
+			error : function (XMLHttpRequest, textStatus, errorThrown) {
+				errCallback(textStatus);
+			}
+		});
+	},
+	load		: function ( idComp, data, current ) {
 		this._idComp = idComp;
 		for ( var x = 0; x < data.length; x++) {
 			this.colFiltres.push( data[x] );
 		}
+		this.set_currentFilter( x );
 	},
 	get_filter	: function ( idFiltre ) {
 		for ( var x = 0; x < this.colFiltres.length; x++) {
+			if ( this.colFiltres[x].id == idFiltre) {
+				this.set_currentFilter(x);
+				return this.colFiltres[x];
+			}
+		}
+		return '';
+	},
+	update_filter	: function ( idFiltre, data ) {
+		for ( var x = 0; x < this.colFiltres.length; x++) {
 			if ( this.colFiltres[x].id == idFiltre) return this.colFiltres[x];
 		}
-		
 		return '';
+	},
+	delete_filter	: function ( idFiltre ) {
+		if ( this.colFiltres[x].length > 1 ) {
+			var cont = -1;
+			for ( var x = 0; x < this.colFiltres.length; x++) {
+				if ( this.colFiltres[x].id == idFiltre) cont = x;
+			}
+			if ( cont >= 0 ) this.colFiltres.splice(cont, 1);
+		}
 	}
 }
 var filterList;
@@ -82,7 +131,7 @@ function create_grid_adv(data) {
 		if ( tabPanel.items.length > 1 ) tabPanel.remove(tabPanel.items.getAt(1));
 
 		filterList = Object.create(objGridAdv_list);
-		filterList.load ( data[0].idComponente, data[0].all_data );
+		filterList.load ( data[0].idComponente, data[0].all_data, 0 );
 
 		var combo_data = [];
 		for (var x =  0; x < data[0].all_data.length; x++) {
@@ -139,36 +188,99 @@ function create_grid_adv(data) {
 		var guiFilter = Ext.create('Ext.Panel', {
 							//layout: 'fit',
 							items: [ combo_filter,
-									{ xtype: 'box', autoEl: {cn: 'Añadir nuevo filtro'}, listeners : { click: function() {
-										 alert('new clicked!');
-									}} },
-									{ xtype: 'box', autoEl: {cn: 'Editar filtro actual'}, listeners : { click: function() { alert('edit clicked!'); }} },
-									{ xtype: 'box', autoEl: {cn: 'Borrar filtro actual'}, listeners : { click: function() { alert('del clicked!'); }} },
-									
-									
-		{
-fieldLabel: 'User',
-id: 'kanri-user',
-xtype: 'box',
-autoEl: {
-	cn: 'eoeoeoeoeoe'
-	/*
-	tag: 'a'
-	href: '#',
-	html: 'User',
-	*/
-},
-listeners: {
-	render: function(c){
-		c.getEl().on('click', function(){
-		alert("asdfasdfasdf");
-			//Ext.getCmp('kanri-content-panel').layout.setActiveItem('kanri-user-panel');
-		}, c, {stopEvent: true});
-}
-}
-}
-									
-									
+									{ 	xtype: 'box',
+										autoEl: {cn: 'Añadir nuevo filtro'},
+										listeners : {
+											render: function(c){
+												c.getEl().on('click', function(){
+													//alert("Nuevo filtro");
+
+	
+													 Ext.define('itemsel_data', {
+													 	extend: 'Ext.data.Model',
+													 	fields: [
+															{name: 'value', type: 'int'},
+															{name: 'text',  type: 'string'}
+													 	]
+													 });
+ 
+													var ds = Ext.create('Ext.data.Store', {
+														 model: 'itemsel_data',
+														 data : [
+															 {value: 1, text: 'Uno'},
+															 {value: 2, text: 'Dos'},
+															 {value: 3, text: 'Tres'},
+															 {value: 4, text: 'Cuatro'},
+															 {value: 5, text: 'Cinco'},
+															 {value: 6, text: 'Seis'}
+														 ]
+													 });
+	
+													var isForm = Ext.widget('form', {
+														title: 'ItemSelector Test',
+														//width: 700,
+														bodyPadding: 10,
+														//height: 300,
+														layout: 'fit',
+														items:[{
+															xtype: 'itemselector',
+															name: 'itemselector',
+															id: 'itemselector-field',
+															anchor: '100%',
+															//fieldLabel: 'ItemSelector',
+															imagePath: '../src/ux/images/',
+															store: ds,
+															displayField: 'text',
+															valueField: 'value',
+															value: ['3', '4', '6'],
+															allowBlank: false,
+															msgTarget: 'side',
+															fromTitle: 'Available',
+															toTitle: 'Selected'
+														}]
+													});
+
+
+													var win_opt = {id:'winFrm_alias', height: 350, width: 600, layout : 'fit', items : {
+																												xtype:"tabpanel",
+																												activeTab:0,
+																												items:[{
+																													xtype:"panel",
+																													title:"Campos",
+																													items:[ isForm ]
+																												  },{
+																													xtype:"panel",
+																													title:"Fitros"
+																												  }]
+																												}
+																											};
+	
+													Ext.create('Ext.window.Window', win_opt ).show();
+	
+												}, c, {stopEvent: true});
+											}
+										}
+									},
+									{	xtype: 'box',
+										autoEl: {cn: 'Editar filtro actual'},
+										listeners : { 
+											render: function(c){
+												c.getEl().on('click', function(){
+													alert("Editar filtro");
+												}, c, {stopEvent: true});
+											}
+										}
+									},
+									{	xtype: 'box',
+										autoEl: {cn: 'Borrar filtro actual'},
+										listeners : {
+											render: function(c){
+												c.getEl().on('click', function(){
+													alert("Editar filtro");
+												}, c, {stopEvent: true});
+											}
+										}
+									}
 								   ]
 						});
 

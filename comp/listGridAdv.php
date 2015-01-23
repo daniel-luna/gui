@@ -36,9 +36,7 @@
 				}
 					
 			}
-			
 			$query = $query . $sWhr;
-			
 			
 		}
 		// SOLO PARA DEBUG!!!!!

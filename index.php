@@ -13,6 +13,8 @@
 	<script type="text/javascript" src="extjs/ext-all-debug.js"></script>
 	<script type="text/javascript" src="extjs/locale/ext-lang-<?php echo $_SESSION['idioma'];?>.js"></script>
 	
+	<!-- para el selector multiple -->
+	<link rel="stylesheet" type="text/css" href="extjs/src/ux/css/ItemSelector.css" />
 	<!-- para el grid con filtro.... -->
 	<link rel="stylesheet" type="text/css" href="extjs/src/ux/grid/css/GridFilters.css" />
 	<link rel="stylesheet" type="text/css" href="extjs/src/ux/grid/css/RangeMenu.css" />
