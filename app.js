@@ -120,6 +120,81 @@ function create_grid(data) {
 
 }
 
+function create_grid_adv_form ( items_data, sel_items_data ) {
+
+	var disp = [];
+	for (var i=0; i < items_data.length; i++) {
+		//var dips_item = {'value': i, 'text': items_data[i].name};
+		var dips_item = {'value': items_data[i].name, 'text': items_data[i].name};
+		disp.push(dips_item);
+	}
+	
+	var sel_disp = [];
+	if ( sel_items_data != -1 ) {
+		for (var i=0; i < sel_items_data.length; i++) {
+			sel_disp.push(sel_items_data[i].name);
+		}
+	}
+		
+	Ext.define('itemsel_data', {
+		extend: 'Ext.data.Model',
+		fields: [
+			/* {name: 'value', type: 'int'}, */
+			{name: 'value', type: 'string'},
+			{name: 'text',  type: 'string'}
+		]
+	});
+ 
+	var ds = Ext.create('Ext.data.Store', {
+		model: 'itemsel_data',
+		data : disp 
+		/* [{value: 1, text: 'Uno'},  {value: 2, text: 'Dos'}, {value: 3, text: 'Tres'}, {value: 4, text: 'Cuatro'}, {value: 5, text: 'Cinco'}, {value: 6, text: 'Seis'}] */
+	 });
+	
+	var isForm = Ext.widget('form', {
+		title: 'ItemSelector Test',
+		//width: 700,
+		bodyPadding: 10,
+		//height: 300,
+		layout: 'fit',
+		items:[{
+			xtype: 'itemselector',
+			name: 'itemselector',
+			id: 'itemselector-field',
+			anchor: '100%',
+			//fieldLabel: 'ItemSelector',
+			imagePath: '../src/ux/images/',
+			store: ds,
+			displayField: 'text',
+			valueField: 'value',
+			value: sel_disp, //['3', '4', '6'],
+			allowBlank: false,
+			msgTarget: 'side',
+			fromTitle: 'Available',
+			toTitle: 'Selected'
+		}]
+	});
+
+
+	var win_opt = {
+		id:'winFrm_alias', height: 350, width: 600, modal : true, layout : 'fit',
+		items : {
+			xtype:"tabpanel",
+			activeTab:0,
+			items:[{
+				xtype:"panel",
+				title:"Campos",
+				items:[ isForm ]
+			},{
+				xtype:"panel",
+				title:"Fitros"
+			}]
+		}
+	};
+	
+	return win_opt;
+}
+
 function create_grid_adv(data) {
 	var tabPanel = Ext.getCmp('GUITab');
 	var tab = Ext.getCmp('tab_' + data[0].idComponente);
@@ -160,7 +235,7 @@ function create_grid_adv(data) {
 									});
 								  	 
 
-									 Ext.getCmp('grid_items').add(Ext.create('comp.listGridAdv', {	gridId		: 'grid_' + d.idComponente,
+									 Ext.getCmp('grid_items').add(Ext.create('comp.listGridAdv', {	gridId : 'grid_' + d.idComponente,
 									 				idReg		: d.id,
 													idComponente: d.idComponente,
 													columnId	: d.columnaId,
@@ -181,8 +256,6 @@ function create_grid_adv(data) {
 			}
 		});
 		
-		
-		
 		combo_filter.setValue( data[0].id );
 
 		var guiFilter = Ext.create('Ext.Panel', {
@@ -193,70 +266,7 @@ function create_grid_adv(data) {
 										listeners : {
 											render: function(c){
 												c.getEl().on('click', function(){
-													//alert("Nuevo filtro");
-
-	
-													 Ext.define('itemsel_data', {
-													 	extend: 'Ext.data.Model',
-													 	fields: [
-															{name: 'value', type: 'int'},
-															{name: 'text',  type: 'string'}
-													 	]
-													 });
- 
-													var ds = Ext.create('Ext.data.Store', {
-														 model: 'itemsel_data',
-														 data : [
-															 {value: 1, text: 'Uno'},
-															 {value: 2, text: 'Dos'},
-															 {value: 3, text: 'Tres'},
-															 {value: 4, text: 'Cuatro'},
-															 {value: 5, text: 'Cinco'},
-															 {value: 6, text: 'Seis'}
-														 ]
-													 });
-	
-													var isForm = Ext.widget('form', {
-														title: 'ItemSelector Test',
-														//width: 700,
-														bodyPadding: 10,
-														//height: 300,
-														layout: 'fit',
-														items:[{
-															xtype: 'itemselector',
-															name: 'itemselector',
-															id: 'itemselector-field',
-															anchor: '100%',
-															//fieldLabel: 'ItemSelector',
-															imagePath: '../src/ux/images/',
-															store: ds,
-															displayField: 'text',
-															valueField: 'value',
-															value: ['3', '4', '6'],
-															allowBlank: false,
-															msgTarget: 'side',
-															fromTitle: 'Available',
-															toTitle: 'Selected'
-														}]
-													});
-
-
-													var win_opt = {id:'winFrm_alias', height: 350, width: 600, layout : 'fit', items : {
-																												xtype:"tabpanel",
-																												activeTab:0,
-																												items:[{
-																													xtype:"panel",
-																													title:"Campos",
-																													items:[ isForm ]
-																												  },{
-																													xtype:"panel",
-																													title:"Fitros"
-																												  }]
-																												}
-																											};
-	
-													Ext.create('Ext.window.Window', win_opt ).show();
-	
+													Ext.create('Ext.window.Window', create_grid_adv_form(Ext.JSON.decode(data[0].CamposDisponibles), -1 )).show();
 												}, c, {stopEvent: true});
 											}
 										}
@@ -266,7 +276,8 @@ function create_grid_adv(data) {
 										listeners : { 
 											render: function(c){
 												c.getEl().on('click', function(){
-													alert("Editar filtro");
+													var d = filterList.get_filter(combo_filter.getValue());
+													Ext.create('Ext.window.Window', create_grid_adv_form(Ext.JSON.decode(data[0].CamposDisponibles), Ext.JSON.decode(d.Campos)) ).show();
 												}, c, {stopEvent: true});
 											}
 										}
@@ -387,7 +398,7 @@ function dispatcher ( caller, prj_alias,  com_alias, col_langs, action, id_value
 					break;
 					
 				case 'com_listgrid_adv':
-				console.log(data)
+					console.log(data)
 					create_grid_adv(data);
 					break;
 					

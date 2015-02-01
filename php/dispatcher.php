@@ -47,24 +47,25 @@
 				}
 				unset($row['sSQL']); unset($row['sSelect']); unset($row['sFrom']); unset($row['sWhere']);
 				
-				$row['all_data'][] = $row;
+				//$row['all_data'][] = $row;
 				
 				if ( $primero == 1 )
 				{
-					$row['idComponente'] = $row['idComponente'];
-					$row['lang'] = $_POST['lang'];
-					$row['prj_alias'] = $alias;
-					$row['com_alias'] = $component;
-					$row['col_langs'] = array('user_lang'=>$_POST['lang'], 'col_lang'=>$_POST['col_langs']);
-					$row['componente'] = $componente;
-					$row['res'] = 'success';
-					
-					$row_arr[] = $row;
-				} else {
-					$row_arr[0]['all_data'][] = $row;
+					$row_d['idComponente'] = $row['idComponente'];
+					$row_d['lang'] = $_POST['lang'];
+					$row_d['prj_alias'] = $alias;
+					$row_d['com_alias'] = $component;
+					$row_d['col_langs'] = array('user_lang'=>$_POST['lang'], 'col_lang'=>$_POST['col_langs']);
+					$row_d['componente'] = $componente;
+					$row_d['res'] = 'success';
+				
+					//$row_arr[] = $row;
+					$row_arr[] = array_merge($row, $row_d);
 				}
 				$primero = 0;
 				
+				if ( $componente == 'com_listgrid_adv') $row_arr[0]['all_data'][] = $row;					
+
 			}
 			
 			echo json_encode($row_arr);
