@@ -13,7 +13,28 @@
 	if ( mysql_num_rows($result) > 0) {
 		
 		$it = mysql_fetch_assoc($result);
-		$query = str_replace("{lang}", $_REQUEST['lang'], $it['sSelect'] . ' ' . $it['sFrom'] . ' ' . $it['sWhere']);
+
+		$sWhr = '';
+		if ( isset($it['sWhere']) && ($it['sWhere'] != '')) {
+
+$objwhr=json_decode($it['sWhere']);
+
+
+			foreach ($objwhr as $item ) {
+				//[{"operand": "", "op_par": "(", "field": "url", "condition": "LIKE", "value": "%google%", "cl_par": ")" }]
+
+			//echo "<pre>";
+			//print_r($item);
+			//echo "</pre>";
+
+				$sWhr .=  $item->operand . ' ' . $item->op_par . ' ' . $item->field . ' ' . $item->condition . ' ' . ( $item->value != '' ? '\'' . $item->value . '\'' : '' ) . ' ' . $item->cl_par . ' ';
+
+			}
+
+			$sWhr = "WHERE 1 AND " . $sWhr;
+		}
+
+		$query = str_replace("{lang}", $_REQUEST['lang'], $it['sSelect'] . ' ' . $it['sFrom'] . ' ' . $sWhr);
 			
 		if (isset($_GET['filter'])) {
 

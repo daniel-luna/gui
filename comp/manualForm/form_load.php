@@ -18,13 +18,30 @@
 				$row = mysql_fetch_assoc($result);
 				$row['id_tipo'] = (int)$row['id_tipo'];
 			}
-	
+			break;
+			
+		case 'evento':
+			$result	= mysql_query("SELECT * FROM `pro_eventos` WHERE `id` = " . $_GET['id_value'], $enlace);
+			$row = array();
+			if ( mysql_num_rows($result) > 0)  {
+				$row = mysql_fetch_assoc($result);
+			}
+			break;
+			
+		case 'enlace':
+			$result	= mysql_query("SELECT * FROM `pro_enlaces` WHERE `id` = " . $_GET['id_value'], $enlace);
+			$row = array();
+			if ( mysql_num_rows($result) > 0)  {
+				$row = mysql_fetch_assoc($result);
+			}
 			break;
 			
 		default:
 			$result	= mysql_query("", $enlace);
 	}
 	
+	$row['table'] = $_GET['table'];
+	$row['id_value'] = $_GET['id_value'];
 
 	
 	echo json_encode( array( 'data' => $row, 'success' => true ) );

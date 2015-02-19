@@ -45,7 +45,7 @@
 						$row[$key] = json_encode($arr);
 					}
 				}
-				unset($row['sSQL']); unset($row['sSelect']); unset($row['sFrom']); unset($row['sWhere']);
+				unset($row['sSQL']); unset($row['sSelect']); unset($row['sFrom']); //unset($row['sWhere']);
 				
 				//$row['all_data'][] = $row;
 				
@@ -64,7 +64,7 @@
 				}
 				$primero = 0;
 				
-				if ( $componente == 'com_listgrid_adv') $row_arr[0]['all_data'][] = $row;					
+				if ( $componente == 'com_listgrid_adv') $row_arr[0]['all_data'][] = $row;
 
 			}
 			

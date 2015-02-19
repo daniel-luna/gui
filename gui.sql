@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.2.11
+-- version 4.0.4
 -- http://www.phpmyadmin.net
 --
--- Servidor: localhost
--- Tiempo de generación: 01-02-2015 a las 11:00:30
--- Versión del servidor: 5.6.21
--- Versión de PHP: 5.6.3
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 19-02-2015 a las 18:51:51
+-- Versión del servidor: 5.5.32
+-- Versión de PHP: 5.4.16
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -29,14 +29,15 @@ USE `gui`;
 --
 
 CREATE TABLE IF NOT EXISTS `com_editform` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `idComponente` int(11) NOT NULL,
   `titulo` varchar(200) NOT NULL,
   `sSQL` text NOT NULL,
   `columnaId` varchar(50) NOT NULL,
   `comboList` text,
-  `campos` text NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  `campos` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 --
 -- Volcado de datos para la tabla `com_editform`
@@ -52,20 +53,23 @@ INSERT INTO `com_editform` (`id`, `idComponente`, `titulo`, `sSQL`, `columnaId`,
 --
 
 CREATE TABLE IF NOT EXISTS `com_form` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `idComponente` int(11) NOT NULL,
   `titulo` varchar(100) NOT NULL,
   `windowData` text,
-  `formData` text NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+  `formData` text NOT NULL,
+  `jsData` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- Volcado de datos para la tabla `com_form`
 --
 
-INSERT INTO `com_form` (`id`, `idComponente`, `titulo`, `windowData`, `formData`) VALUES
-(1, 7, 'Evento', 'title: ''Eventos'', height : 450, width : 450', 'var guiForm = Ext.create(''Ext.form.Panel'', {\r\n	bodyPadding: 5,\r\n	width: 350,\r\n	url: ''comp/manual/save-form.php'', layout: ''anchor'', defaults: { anchor: ''100%''},\r\n	defaultType: ''textfield'',\r\n	items: [\r\n		{fieldLabel: ''First Name'',name: ''first'', allowBlank: false },{ fieldLabel: ''Last Name'', name: ''last'', allowBlank: false }\r\n	],\r\n	buttons: [\r\n{text: ''Reset'', handler: function() { this.up(''form'').getForm().reset(); }}, { text: ''Submit'', formBind: true, disabled: true, handler: function() { var form = this.up(''form'').getForm(); if (form.isValid()) { form.submit({	 success: function(form, action) { Ext.Msg.alert(''Success'', action.result.msg);}, failure: function(form, action) { Ext.Msg.alert(''Failed'', action.result.msg); }}); } } }\r\n	] ,\r\n	listeners: { \r\n		afterrender: function(component, eOpts) {\r\n			if ( id_value > 0)  alert(''hola! after_render id_value: '' + id_value); /*this.load({ url: ''comp/manualForm/load-form.php'', waitMsg : ''loading....'' }); */\r\n		}\r\n	}\r\n\r\n});'),
-(2, 8, 'Noticia', 'title: ''Simple Form'', height : 450, width : 850', 'Ext.define(''combo_model_id_tipo'', {\r\n	extend: ''Ext.data.Model'',\r\n	fields: [{name: ''id'', type:''int''}, {name:''descr'', type:''string''}]\r\n});\r\nvar id_tipo_store = Ext.create(''Ext.data.Store'', {\r\n	model: ''combo_model_id_tipo'',\r\n	proxy: {\r\n		async : false,\r\n		type: ''ajax'',\r\n		url: ''comp/manualForm/select.php?action=load&table=tipos_noticia'',\r\n		reader: {\r\n			type: ''json'',\r\n			root: ''data''\r\n		}\r\n	},\r\n	autoLoad: true\r\n	,root: ''data''\r\n});\r\n \r\n\r\nvar guiForm = Ext.create(''Ext.form.Panel'', {\r\n	bodyPadding: 5,\r\n	width: 350,\r\n	url: ''comp/manual/form_save.php'', layout: ''anchor'', /*defaults: { anchor: ''100%''},*/\r\n	defaultType: ''textfield'',\r\n	items: [\r\n		{fieldLabel: ''titulo'', name: ''titulo'', allowBlank: false },\r\n		{fieldLabel: ''Breve'', name: ''breve'', allowBlank: false, anchor: ''100%'' },\r\n		{xtype: ''htmleditor'', name: ''descripcion'', fieldLabel: ''Descripción'',anchor: ''100%''},\r\n		{fieldLabel: ''Fecha'', name: ''fecha'', xtype: ''datefield'', tooltip: ''Fecha de publicacion'', width: 250},\r\n		{xtype: ''combobox'', id: ''id_tipo'', name: ''id_tipo'', fieldLabel: ''Tipo'', store: id_tipo_store, displayField: ''descr'', valueField: ''id'', hiddenName: ''id_tipo'', mode: ''remote'', width: 250}\r\n	],\r\n	buttons: [\r\n		{ text: ''Submit'',\r\n		  formBind: true,\r\n		  disabled: true,\r\n		  handler: function() {\r\n			var form = this.up(''form'').getForm();\r\n			if (form.isValid()) {\r\n				form.submit({\r\n					success: function(form, action) {\r\n						Ext.Msg.alert(''Success'', action.result.msg);\r\n					},\r\n					failure: function(form, action) {\r\n						Ext.Msg.alert(''Failed'', action.result.msg); \r\n					}\r\n				});\r\n			}\r\n		  }\r\n		}\r\n	] ,\r\n	listeners: { \r\n		afterrender: function(component, eOpts) {\r\n			if ( id_value > 0)  this.load({ url: ''comp/manualForm/form_load.php?table=noticia&id_value='' + id_value, waitMsg : ''loading....'' });\r\n		}\r\n	}\r\n\r\n});');
+INSERT INTO `com_form` (`id`, `idComponente`, `titulo`, `windowData`, `formData`, `jsData`) VALUES
+(1, 7, 'Evento', 'title: ''Eventos'', height : 250, width : 450', 'var guiForm = Ext.create(''Ext.form.Panel'', {\n	bodyPadding: 5,\n	width: 350,\n	url: ''comp/manualForm/form_save.php'', layout: ''anchor'', defaults: { anchor: ''100%''},\n	defaultType: ''textfield'',\n	items: [\n{ xtype:''hidden'', name:''table''},\n{ xtype:''hidden'', name:''id_value''},\n{\n    xtype:"textfield",\n    allowBlank: false,\n    fieldLabel:"Titulo",\n    name:"titulo"\n  },{\n    xtype:"textareafield",\n    allowBlank: false,\n    fieldLabel:"Descripcion",\n    name:"descripcion"\n  },{\n    xtype:"datefield",\n    allowBlank: false,\n    dateFormat: ''d/m/Y'',\n    fieldLabel:"Fecha",\n    name:"fecha"\n  }],\n	buttons: [\n{text: ''Reset'', handler: function() { this.up(''form'').getForm().reset(); }}, { text: ''Submit'', formBind: true, disabled: true, handler: function() { var form = this.up(''form'').getForm(); if (form.isValid()) { form.submit({	 success: function(form, action) { Ext.Msg.alert(''Success'', action.result.msg);}, failure: function(form, action) { Ext.Msg.alert(''Failed'', action.result.msg); }}); } } }\n	] ,\n	listeners: { \n		afterrender: function(component, eOpts) {\n			if ( id_value > 0)  this.load({ url: ''comp/manualForm/form_load.php?table=evento&id_value='' + id_value, waitMsg : ''loading....'' });\n		}\n	}\n\n});', ''),
+(2, 8, 'Noticia', 'title: ''Simple Form'', height : 450, width : 850', 'Ext.define(''combo_model_id_tipo'', {\r\n	extend: ''Ext.data.Model'',\r\n	fields: [{name: ''id'', type:''int''}, {name:''descr'', type:''string''}]\r\n});\r\nvar id_tipo_store = Ext.create(''Ext.data.Store'', {\r\n	model: ''combo_model_id_tipo'',\r\n	proxy: {\r\n		async : false,\r\n		type: ''ajax'',\r\n		url: ''comp/manualForm/select.php?action=load&table=tipos_noticia'',\r\n		reader: {\r\n			type: ''json'',\r\n			root: ''data''\r\n		}\r\n	},\r\n	autoLoad: true\r\n	,root: ''data''\r\n});\r\n \r\n\r\nvar guiForm = Ext.create(''Ext.form.Panel'', {\r\n	bodyPadding: 5,\r\n	width: 350,\r\n	url: ''comp/manualForm/form_save.php'', layout: ''anchor'', /*defaults: { anchor: ''100%''},*/\r\n	defaultType: ''textfield'',\r\n	items: [\r\n		{fieldLabel: ''titulo'', name: ''titulo'', allowBlank: false },\r\n		{fieldLabel: ''Breve'', name: ''breve'', allowBlank: false, anchor: ''100%'' },\r\n		{xtype: ''htmleditor'', name: ''descripcion'', fieldLabel: ''Descripción'',anchor: ''100%''},\r\n		{fieldLabel: ''Fecha'', name: ''fecha'', xtype: ''datefield'', tooltip: ''Fecha de publicacion'', width: 250},\r\n		{xtype: ''combobox'', id: ''id_tipo'', name: ''id_tipo'', fieldLabel: ''Tipo'', store: id_tipo_store, displayField: ''descr'', valueField: ''id'', hiddenName: ''id_tipo'', mode: ''remote'', width: 250}\r\n	],\r\n	buttons: [\r\n		{ text: ''Submit'',\r\n		  formBind: true,\r\n		  disabled: true,\r\n		  handler: function() {\r\n			var form = this.up(''form'').getForm();\r\n			if (form.isValid()) {\r\n				form.submit({\r\n					success: function(form, action) {\r\n						Ext.Msg.alert(''Success'', action.result.msg);\r\n					},\r\n					failure: function(form, action) {\r\n						Ext.Msg.alert(''Failed'', action.result.msg); \r\n					}\r\n				});\r\n			}\r\n		  }\r\n		}\r\n	] ,\r\n	listeners: { \r\n		afterrender: function(component, eOpts) {\r\n			if ( id_value > 0)  this.load({ url: ''comp/manualForm/form_load.php?table=noticia&id_value='' + id_value, waitMsg : ''loading....'' });\r\n		}\r\n	}\r\n\r\n});', ''),
+(3, 10, 'Enlaces', 'title: ''Eventos'', height : 200, width : 450', 'var guiForm = Ext.create(''Ext.form.Panel'', {\r\n	bodyPadding: 5,\r\n	width: 350,\r\n	url: ''comp/manualForm/form_save.php'', layout: ''anchor'', defaults: { anchor: ''100%''},\r\n	defaultType: ''textfield'',\r\n	items: [\r\n{ xtype:''hidden'', name:''table''},\r\n{ xtype:''hidden'', name:''id_value''},\r\n{\r\n    xtype:"textfield",\r\n    allowBlank: false,\r\n    fieldLabel:"Descripcion",\r\n    name:"descripcion"\r\n  },{\r\n    xtype:"textfield",\r\n    allowBlank: false,\r\n    fieldLabel:"Url",\r\n    name:"url"\r\n  }],\r\n	buttons: [\r\n{text: ''Reset'', handler: function() { this.up(''form'').getForm().reset(); }}, { text: ''Submit'', formBind: true, disabled: true, handler: function() { var form = this.up(''form'').getForm(); if (form.isValid()) { form.submit({	 success: function(form, action) { Ext.Msg.alert(''Success'', action.result.msg);}, failure: function(form, action) { Ext.Msg.alert(''Failed'', action.result.msg); }}); } } }\r\n	] ,\r\n	listeners: { \r\n		afterrender: function(component, eOpts) {\r\n			if ( id_value > 0)  this.load({ url: ''comp/manualForm/form_load.php?table=enlace&id_value='' + id_value, waitMsg : ''loading....'' });\r\n		}\r\n	}\r\n\r\n});', '');
 
 -- --------------------------------------------------------
 
@@ -74,14 +78,15 @@ INSERT INTO `com_form` (`id`, `idComponente`, `titulo`, `windowData`, `formData`
 --
 
 CREATE TABLE IF NOT EXISTS `com_listgrid` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `idComponente` int(11) NOT NULL,
   `titulo` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
   `sSQL` text COLLATE utf8_unicode_ci NOT NULL,
   `columnaId` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `Campos` text COLLATE utf8_unicode_ci NOT NULL,
-  `Columnas` text COLLATE utf8_unicode_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `Columnas` text COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=7 ;
 
 --
 -- Volcado de datos para la tabla `com_listgrid`
@@ -102,7 +107,7 @@ INSERT INTO `com_listgrid` (`id`, `idComponente`, `titulo`, `sSQL`, `columnaId`,
 --
 
 CREATE TABLE IF NOT EXISTS `com_listgrid_adv` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `idComponente` int(11) NOT NULL,
   `titulo` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
   `titulo_filtro` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
@@ -113,16 +118,17 @@ CREATE TABLE IF NOT EXISTS `com_listgrid_adv` (
   `Campos` text COLLATE utf8_unicode_ci NOT NULL,
   `Columnas` text COLLATE utf8_unicode_ci NOT NULL,
   `CamposDisponibles` text COLLATE utf8_unicode_ci NOT NULL,
-  `porDefecto` bit(1) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `porDefecto` bit(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
 
 --
 -- Volcado de datos para la tabla `com_listgrid_adv`
 --
 
 INSERT INTO `com_listgrid_adv` (`id`, `idComponente`, `titulo`, `titulo_filtro`, `sSelect`, `sFrom`, `sWhere`, `columnaId`, `Campos`, `Columnas`, `CamposDisponibles`, `porDefecto`) VALUES
-(1, 10, 'Enlaces', 'Ver todos los registros', 'SELECT id, descripcion, url', 'FROM pro_enlaces', 'WHERE 1', 'id', '[{"name": "id", "type": "int"}, {"name": "url", "type": "string"}]', '[{"dataIndex": "id", "text": "Id", "filterable": true}, {"dataIndex": "url", "text": "Url", "filter": {"type": "string"}}]', '[{"name": "id", "type": "int"}, {"name": "descripcion", "type": "string"}, {"name": "url", "type": "string"}]', b'1'),
-(2, 10, 'Enlaces', 'Los de google', 'SELECT id, descripcion, url', 'FROM pro_enlaces', 'WHERE 1 AND url LIKE ''%google%''', 'id', '[{"name": "id", "type": "int"}, {"name": "descripcion", "type": "string"}, {"name": "url", "type": "string"}]', '[{"dataIndex": "id", "text": "Id", "filterable": true}, {"dataIndex": "descripcion", "text": "Descripción", "filter": {"type": "string"}}, {"dataIndex": "url", "text": "Url", "filter": {"type": "string"}}]', '[{"name": "id", "type": "int"}, {"name": "descripcion", "type": "string"}, {"name": "url", "type": "string"}]', b'0');
+(1, 10, 'Enlaces', 'Ver todos los registros', 'SELECT id, descripcion, url', 'FROM pro_enlaces', '', 'id', '[{"name": "id", "type": "int"}, {"name": "url", "type": "string"}]', '[{"dataIndex": "id", "text": "Id", "filterable": true}, {"dataIndex": "url", "text": "Url", "filter": {"type": "string"}}]', '[{"name": "id", "type": "int"}, {"name": "descripcion", "type": "string"}, {"name": "url", "type": "string"}]', b'1'),
+(2, 10, 'Enlaces', 'Los de google', 'SELECT id, descripcion, url', 'FROM pro_enlaces', '[{"operand": "", "op_par": "(", "field": "url", "condition": "LIKE", "value": "%google%", "cl_par": ")" }, {"operand": "AND", "op_par": "(", "field": "id", "condition": ">=", "value": "3", "cl_par": ")" }]', 'id', '[{"name": "id", "type": "int"}, {"name": "descripcion", "type": "string"}, {"name": "url", "type": "string"}]', '[{"dataIndex": "id", "text": "Id", "filterable": true}, {"dataIndex": "descripcion", "text": "Descripción", "filter": {"type": "string"}}, {"dataIndex": "url", "text": "Url", "filter": {"type": "string"}}]', '[{"name": "id", "type": "int"}, {"name": "descripcion", "type": "string"}, {"name": "url", "type": "string"}]', b'0');
 
 -- --------------------------------------------------------
 
@@ -131,10 +137,11 @@ INSERT INTO `com_listgrid_adv` (`id`, `idComponente`, `titulo`, `titulo_filtro`,
 --
 
 CREATE TABLE IF NOT EXISTS `gui_idiomas` (
-`id` int(5) NOT NULL,
+  `id` int(5) NOT NULL AUTO_INCREMENT,
   `clave` varchar(5) NOT NULL,
-  `nombre` varchar(255) NOT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+  `nombre` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- Volcado de datos para la tabla `gui_idiomas`
@@ -184,9 +191,10 @@ INSERT INTO `gui_locales` (`idProyecto`, `aliasProyecto`, `clave`, `ca_ES`, `es_
 --
 
 CREATE TABLE IF NOT EXISTS `gui_perfiles` (
-`id` int(5) NOT NULL,
-  `alias` varchar(20) COLLATE utf8_unicode_ci NOT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `id` int(5) NOT NULL AUTO_INCREMENT,
+  `alias` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=8 ;
 
 --
 -- Volcado de datos para la tabla `gui_perfiles`
@@ -244,12 +252,13 @@ INSERT INTO `gui_perfiles_i18n` (`idPerfil`, `idIdioma`, `Nombre`, `Descripcion`
 --
 
 CREATE TABLE IF NOT EXISTS `gui_proyectos` (
-`id` int(5) NOT NULL,
+  `id` int(5) NOT NULL AUTO_INCREMENT,
   `alias` varchar(255) NOT NULL,
   `home` varchar(255) DEFAULT NULL,
   `dbName` varchar(255) DEFAULT NULL,
-  `multilang` enum('S','N') NOT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+  `multilang` enum('S','N') NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- Volcado de datos para la tabla `gui_proyectos`
@@ -269,7 +278,8 @@ CREATE TABLE IF NOT EXISTS `gui_proyectos_i18n` (
   `idProyecto` int(5) NOT NULL,
   `idIdioma` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
   `nombre` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
-  `descripcion` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL
+  `descripcion` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`idProyecto`,`idIdioma`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
@@ -291,7 +301,8 @@ INSERT INTO `gui_proyectos_i18n` (`idProyecto`, `idIdioma`, `nombre`, `descripci
 CREATE TABLE IF NOT EXISTS `gui_proyectos_idiomas` (
   `idProyecto` int(5) NOT NULL,
   `idIdioma` varchar(5) NOT NULL,
-  `defecto` enum('S','N') NOT NULL
+  `defecto` enum('S','N') NOT NULL,
+  PRIMARY KEY (`idProyecto`,`idIdioma`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -311,15 +322,16 @@ INSERT INTO `gui_proyectos_idiomas` (`idProyecto`, `idIdioma`, `defecto`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `gui_proyectos_nodos` (
-`id` int(5) NOT NULL,
+  `id` int(5) NOT NULL AUTO_INCREMENT,
   `idProyecto` int(5) NOT NULL,
   `idNodoPadre` int(5) DEFAULT NULL,
   `alias` varchar(150) COLLATE utf8_unicode_ci DEFAULT NULL,
   `titulo` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
   `icono` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
   `listado` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `edicion` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `edicion` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=18 ;
 
 --
 -- Volcado de datos para la tabla `gui_proyectos_nodos`
@@ -348,7 +360,8 @@ INSERT INTO `gui_proyectos_nodos` (`id`, `idProyecto`, `idNodoPadre`, `alias`, `
 
 CREATE TABLE IF NOT EXISTS `gui_proyectos_usuarios` (
   `idProyecto` int(5) NOT NULL,
-  `idUsuario` int(5) NOT NULL
+  `idUsuario` int(5) NOT NULL,
+  PRIMARY KEY (`idProyecto`,`idUsuario`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -366,7 +379,7 @@ INSERT INTO `gui_proyectos_usuarios` (`idProyecto`, `idUsuario`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `gui_usuarios` (
-`id` int(5) NOT NULL,
+  `id` int(5) NOT NULL AUTO_INCREMENT,
   `idPerfil` int(5) NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(25) NOT NULL,
@@ -374,8 +387,10 @@ CREATE TABLE IF NOT EXISTS `gui_usuarios` (
   `apellidos` varchar(255) DEFAULT NULL,
   `mail` varchar(255) DEFAULT NULL,
   `idIdioma` varchar(5) NOT NULL,
-  `foto` varchar(255) DEFAULT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
+  `foto` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED AUTO_INCREMENT=3 ;
 
 --
 -- Volcado de datos para la tabla `gui_usuarios`
@@ -392,10 +407,11 @@ INSERT INTO `gui_usuarios` (`id`, `idPerfil`, `username`, `password`, `nombre`, 
 --
 
 CREATE TABLE IF NOT EXISTS `pro_enlaces` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(250) NOT NULL,
-  `url` varchar(250) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+  `url` varchar(250) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 --
 -- Volcado de datos para la tabla `pro_enlaces`
@@ -404,7 +420,7 @@ CREATE TABLE IF NOT EXISTS `pro_enlaces` (
 INSERT INTO `pro_enlaces` (`id`, `descripcion`, `url`) VALUES
 (1, 'Enlace a dani', 'http://www.danielluna.net'),
 (2, 'Pral. de Google', 'http://www.google.es'),
-(3, 'Mapas', 'http://maps.google.es'),
+(3, 'Mapas de Google', 'http://maps.google.es'),
 (4, 'Drive', 'http://drive.google.es');
 
 -- --------------------------------------------------------
@@ -414,11 +430,12 @@ INSERT INTO `pro_enlaces` (`id`, `descripcion`, `url`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `pro_eventos` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `titulo` varchar(100) NOT NULL,
   `descripcion` text NOT NULL,
-  `fecha` date NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+  `fecha` date NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 --
 -- Volcado de datos para la tabla `pro_eventos`
@@ -426,7 +443,7 @@ CREATE TABLE IF NOT EXISTS `pro_eventos` (
 
 INSERT INTO `pro_eventos` (`id`, `titulo`, `descripcion`, `fecha`) VALUES
 (1, 'Primer evento', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum', '2014-10-05'),
-(2, 'Evento segundo', 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.', '2014-10-12');
+(2, 'Evento segundo 2', 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.', '2015-02-09');
 
 -- --------------------------------------------------------
 
@@ -435,13 +452,14 @@ INSERT INTO `pro_eventos` (`id`, `titulo`, `descripcion`, `fecha`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `pro_noticias` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `titulo` text NOT NULL,
   `descripcion` text NOT NULL,
   `breve` text NOT NULL,
   `id_tipo` int(11) NOT NULL,
-  `fecha` date NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+  `fecha` date NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- Volcado de datos para la tabla `pro_noticias`
@@ -459,9 +477,10 @@ INSERT INTO `pro_noticias` (`id`, `titulo`, `descripcion`, `breve`, `id_tipo`, `
 --
 
 CREATE TABLE IF NOT EXISTS `pro_tipos_noticia` (
-`id` int(11) NOT NULL,
-  `descripcion` varchar(150) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `descripcion` varchar(150) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 --
 -- Volcado de datos para la tabla `pro_tipos_noticia`
@@ -471,175 +490,6 @@ INSERT INTO `pro_tipos_noticia` (`id`, `descripcion`) VALUES
 (1, 'Internacional'),
 (2, 'Nacional');
 
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `com_editform`
---
-ALTER TABLE `com_editform`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `com_form`
---
-ALTER TABLE `com_form`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `com_listgrid`
---
-ALTER TABLE `com_listgrid`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `com_listgrid_adv`
---
-ALTER TABLE `com_listgrid_adv`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `gui_idiomas`
---
-ALTER TABLE `gui_idiomas`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `gui_perfiles`
---
-ALTER TABLE `gui_perfiles`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `gui_proyectos`
---
-ALTER TABLE `gui_proyectos`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `gui_proyectos_i18n`
---
-ALTER TABLE `gui_proyectos_i18n`
- ADD PRIMARY KEY (`idProyecto`,`idIdioma`);
-
---
--- Indices de la tabla `gui_proyectos_idiomas`
---
-ALTER TABLE `gui_proyectos_idiomas`
- ADD PRIMARY KEY (`idProyecto`,`idIdioma`);
-
---
--- Indices de la tabla `gui_proyectos_nodos`
---
-ALTER TABLE `gui_proyectos_nodos`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `gui_proyectos_usuarios`
---
-ALTER TABLE `gui_proyectos_usuarios`
- ADD PRIMARY KEY (`idProyecto`,`idUsuario`);
-
---
--- Indices de la tabla `gui_usuarios`
---
-ALTER TABLE `gui_usuarios`
- ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `username` (`username`);
-
---
--- Indices de la tabla `pro_enlaces`
---
-ALTER TABLE `pro_enlaces`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `pro_eventos`
---
-ALTER TABLE `pro_eventos`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `pro_noticias`
---
-ALTER TABLE `pro_noticias`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `pro_tipos_noticia`
---
-ALTER TABLE `pro_tipos_noticia`
- ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `com_editform`
---
-ALTER TABLE `com_editform`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
---
--- AUTO_INCREMENT de la tabla `com_form`
---
-ALTER TABLE `com_form`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
---
--- AUTO_INCREMENT de la tabla `com_listgrid`
---
-ALTER TABLE `com_listgrid`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
---
--- AUTO_INCREMENT de la tabla `com_listgrid_adv`
---
-ALTER TABLE `com_listgrid_adv`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
---
--- AUTO_INCREMENT de la tabla `gui_idiomas`
---
-ALTER TABLE `gui_idiomas`
-MODIFY `id` int(5) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
---
--- AUTO_INCREMENT de la tabla `gui_perfiles`
---
-ALTER TABLE `gui_perfiles`
-MODIFY `id` int(5) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
---
--- AUTO_INCREMENT de la tabla `gui_proyectos`
---
-ALTER TABLE `gui_proyectos`
-MODIFY `id` int(5) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
---
--- AUTO_INCREMENT de la tabla `gui_proyectos_nodos`
---
-ALTER TABLE `gui_proyectos_nodos`
-MODIFY `id` int(5) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=18;
---
--- AUTO_INCREMENT de la tabla `gui_usuarios`
---
-ALTER TABLE `gui_usuarios`
-MODIFY `id` int(5) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
---
--- AUTO_INCREMENT de la tabla `pro_enlaces`
---
-ALTER TABLE `pro_enlaces`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
---
--- AUTO_INCREMENT de la tabla `pro_eventos`
---
-ALTER TABLE `pro_eventos`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
---
--- AUTO_INCREMENT de la tabla `pro_noticias`
---
-ALTER TABLE `pro_noticias`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
---
--- AUTO_INCREMENT de la tabla `pro_tipos_noticia`
---
-ALTER TABLE `pro_tipos_noticia`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

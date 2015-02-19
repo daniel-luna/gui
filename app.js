@@ -6,6 +6,12 @@ Ext.require([
     'Ext.data.*',
     'Ext.ux.grid.FiltersFeature',
     'Ext.toolbar.Paging',
+	//row editing grid
+    //'Ext.grid.*',
+    //'Ext.data.*',
+    'Ext.util.*',
+    'Ext.state.*',
+    'Ext.form.*',
     //multiselect / item-selector
     'Ext.form.Panel',
     'Ext.ux.form.MultiSelect',
@@ -14,7 +20,6 @@ Ext.require([
     'Ext.ux.ajax.JsonSimlet',
     'Ext.ux.ajax.SimManager'
 ]);
-
 
 
 var objGridAdv_list = {
@@ -37,10 +42,10 @@ var objGridAdv_list = {
 			dataType		: 'json', //(objConfig.localhost ? 'json' : 'jsonp'), 
 			jsonpCallback	: 'callbackResp',
 			url				: params.url,
-			success : function (callbackResp) {
+			success : function ( callbackResp ) {
 				okCallback(callbackResp);
 			},
-			error : function (XMLHttpRequest, textStatus, errorThrown) {
+			error : function ( XMLHttpRequest, textStatus, errorThrown ) {
 				errCallback(textStatus);
 			}
 		});
@@ -120,8 +125,10 @@ function create_grid(data) {
 
 }
 
-function create_grid_adv_form ( items_data, sel_items_data ) {
+function create_grid_adv_form ( items_data, sel_items_data, sel_filter_data ) {
 
+	/* Pestaña de campos */
+	/************************************************************************************************************************/
 	var disp = [];
 	for (var i=0; i < items_data.length; i++) {
 		//var dips_item = {'value': i, 'text': items_data[i].name};
@@ -175,6 +182,223 @@ function create_grid_adv_form ( items_data, sel_items_data ) {
 		}]
 	});
 
+	/* FIN Pestaña de campos */
+	/************************************************************************************************************************/
+
+	/* Pestaña de filtros */
+	/************************************************************************************************************************/
+
+    var valueOperand = Ext.create('Ext.data.ArrayStore', {
+		fields: ['value', 'name'],
+		data :[['', ''],['AND', 'AND'],['OR', 'OR']]
+    });
+
+    var valueOpen = Ext.create('Ext.data.ArrayStore', {
+		fields: ['value', 'name'],
+        data :[['', ''],['(', '(']]
+    });
+
+
+	Ext.define('itemfilter_data', {
+		extend: 'Ext.data.Model',
+		fields: [
+			{name: 'name', type: 'string'}
+		]
+	});
+
+	var dfilters = Ext.create('Ext.data.Store', {
+		model: 'itemfilter_data',
+		data : items_data 
+	 });
+
+	var field_data = [];
+	for ( var i=0; i < items_data.length; i++) {
+		var d = [];
+		
+		d.push(items_data[i].name);
+		d.push(items_data[i].name);
+		field_data.push(d);
+	}
+    var valueFields = Ext.create('Ext.data.ArrayStore', {
+		fields: ['name'],
+        data :field_data
+    });
+
+    var valueCondition = Ext.create('Ext.data.ArrayStore', {
+		fields: ['value', 'name'],
+		data :[['', ''],['>', '>'],['>=', '>='],['=', '='],['<', '<'],['<=', '<='],['<>', '<>'],['LIKE', 'LIKE'],['IS NULL', 'IS NULL'],['IS NOT NULL', 'IS NOT NULL']]
+	});
+
+	var valueClose = Ext.create('Ext.data.ArrayStore', {
+		fields: ['value', 'name'],
+		data: [['', ''],[')', ')']]
+    });
+
+	Ext.define('filter_model', {
+		extend: 'Ext.data.Model',
+		fields: ['operand', 'op_par', 'field', 'condition', 'value', 'cl_par']
+	});
+
+	var the_data = {};
+	if ( sel_filter_data != -1 ) the_data = sel_filter_data;
+
+	var filter_grid_store = Ext.create('Ext.data.Store', {
+        // destroy the store if the grid is destroyed
+        autoDestroy: true,
+        model: 'filter_model',
+        proxy: {
+            type: 'memory'
+        },
+        data: the_data,
+    });
+
+	var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+		clicksToMoveEditor: 1,
+		autoCancel: false
+	});
+
+
+    // create the grid and specify what field you want to use for the editor at each column.
+    var filter_grid = Ext.create('Ext.grid.Panel', {
+        store: filter_grid_store,
+        columns: [{
+			header: 'Operando',
+            dataIndex: 'operand',
+            id: 'operand',
+            editor : {
+	            xtype: 'combo',
+	            editable: false, 
+	            valueField: 'value',
+	            displayField: 'name',
+	            store: valueOperand,
+	            mode: 'local',
+	            triggerAction: 'all',
+	            flex: 1,
+				forceSelection:true,
+				allowBlank:true,
+			}
+        }, {
+            header: 'Par.',
+            dataIndex: 'open_parentesis',
+            id: 'open_parentesis',
+            editor: {
+            	xtype: 'combo',
+	            valueField: 'name',
+	            displayField: 'name',
+	            store: valueOpen,
+	            mode: 'local',
+	            triggerAction: 'all',
+	            flex: 1,
+				forceSelection:true,
+				allowBlank:true,
+			}
+        }, {
+            header: 'Campo',
+            dataIndex: 'field',
+            id: 'field',
+            editor: {
+            	xtype: 'combo',
+	            valueField: 'name',
+	            displayField: 'name',
+	            store: valueFields,
+	            mode: 'local',
+	            triggerAction: 'all',
+	            flex: 1,
+				forceSelection:true,
+				allowBlank:true,
+			}
+        }, {
+            header: 'Condición',
+            dataIndex: 'condition',
+            id: 'condition',
+            editor: {
+            	xtype: 'combo',
+	            valueField: 'value',
+	            displayField: 'name',
+	            store: valueCondition,
+	            mode: 'local',
+	            triggerAction: 'all',
+	            flex: 1,
+				forceSelection:true,
+				allowBlank:true,
+			}
+        }, {
+            header: 'Valor',
+            dataIndex: 'value',
+            id: 'field_value',
+            editor: {
+            	xtype: 'textfield',
+	            flex: 1,
+				forceSelection:true,
+				allowBlank:true,
+			}
+        }, {
+            header: 'Par.',
+            dataIndex: 'close_parentesis',
+            id: 'close_parentesis',
+            editor: {
+            	xtype: 'combo',
+	            valueField: 'value',
+	            displayField: 'name',
+	            store: valueClose,
+	            mode: 'local',
+	            triggerAction: 'all',
+	            flex: 1,
+				forceSelection:true,
+				allowBlank:true,
+			}
+        }
+
+        ],
+        //renderTo: 'editor-grid',
+        //width: 600,
+        //height: 400,
+        //title: 'Employee Salaries',
+        frame: true,
+        tbar: [{
+            text: 'Add Employee',
+            iconCls: 'employee-add',
+            handler : function() {
+                rowEditing.cancelEdit();
+
+                // Create a model instance
+                var r = Ext.create('filter_model', {
+					operand: '',
+					op_par: '',
+					field: '',
+					condition: '',
+					value: '',
+					cl_par: ''
+				});
+
+				filter_grid_store.insert(0, r);
+				rowEditing.startEdit(0, 0);
+
+            }
+        }, {
+            itemId: 'removeEmployee',
+            text: 'Remove Employee',
+            iconCls: 'employee-remove',
+            handler: function() {
+                var sm = filter_grid.getSelectionModel();
+                rowEditing.cancelEdit();
+                filter_grid_store.remove(sm.getSelection());
+                if (filter_grid_store.getCount() > 0) {
+                    sm.select(0);
+                }
+            },
+            disabled: true
+        }],
+        plugins: [rowEditing],
+        listeners: {
+            'selectionchange': function(view, records) {
+                filter_grid.down('#removeEmployee').setDisabled(!records.length);
+            }
+        }
+    });
+
+	/* FIN Pestaña de filtros */
+	/************************************************************************************************************************/
 
 	var win_opt = {
 		id:'winFrm_alias', height: 350, width: 600, modal : true, layout : 'fit',
@@ -182,12 +406,15 @@ function create_grid_adv_form ( items_data, sel_items_data ) {
 			xtype:"tabpanel",
 			activeTab:0,
 			items:[{
+				layout:"fit",
 				xtype:"panel",
 				title:"Campos",
 				items:[ isForm ]
 			},{
+				layout: "fit",
 				xtype:"panel",
-				title:"Fitros"
+				title:"Fitros",
+				items: [filter_grid]
 			}]
 		}
 	};
@@ -266,7 +493,11 @@ function create_grid_adv(data) {
 										listeners : {
 											render: function(c){
 												c.getEl().on('click', function(){
-													Ext.create('Ext.window.Window', create_grid_adv_form(Ext.JSON.decode(data[0].CamposDisponibles), -1 )).show();
+
+													var d_filter = -1;
+													if ( d.sWhere != '' )  d_filter = Ext.JSON.decode(d.sWhere);
+
+													Ext.create('Ext.window.Window', create_grid_adv_form(Ext.JSON.decode(data[0].CamposDisponibles), -1, d_filter )).show();
 												}, c, {stopEvent: true});
 											}
 										}
@@ -277,7 +508,11 @@ function create_grid_adv(data) {
 											render: function(c){
 												c.getEl().on('click', function(){
 													var d = filterList.get_filter(combo_filter.getValue());
-													Ext.create('Ext.window.Window', create_grid_adv_form(Ext.JSON.decode(data[0].CamposDisponibles), Ext.JSON.decode(d.Campos)) ).show();
+													
+													var d_filter = -1;
+													if ( d.sWhere != '' )  d_filter = Ext.JSON.decode(d.sWhere);
+
+													Ext.create('Ext.window.Window', create_grid_adv_form(Ext.JSON.decode(data[0].CamposDisponibles), Ext.JSON.decode(d.Campos), d_filter )).show();
 												}, c, {stopEvent: true});
 											}
 										}
