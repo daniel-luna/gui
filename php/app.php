@@ -84,7 +84,7 @@
 	}
 	
 	//sites: alias, bbdd, titulo
-	$sSesion="{username: '".$_SESSION["user"]."', nombre: '".$_SESSION["name"]."', admin: '".$_SESSION["admin"]."', perfil: '".$_SESSION["perfil"]."', idioma: '".$_SESSION["idioma"]."', imgs_path: '../photos/', sites: ";
+	$sSesion="{username: '".$_SESSION["user"]."', nombre: '".$_SESSION["name"]."', admin: '".$_SESSION["admin"]."', perfil: '".$_SESSION["perfil"]."', idioma: '".$_SESSION["idioma"]."', imgs_path: '../photos/', css: '".$_SESSION["css"]."', sites: ";
 
 	$sql=	"	SELECT gui_proyectos.id, gui_proyectos.alias, gui_proyectos.dbName
 				FROM (gui_proyectos INNER JOIN gui_proyectos_usuarios ON gui_proyectos.id = gui_proyectos_usuarios.idProyecto)
@@ -93,7 +93,8 @@
 	$result = mysql_query($sql, $enlace);
 
 	$sSesion .= "[{prjAlias: 'app', " . get_project_lang(2) . "}";
-	if (($_SESSION["perfil"]=="admin") || ($_SESSION["perfil"]=="webmaster")) $sSesion .= ", {prjAlias: 'gui', " . get_project_lang(1) . "}";
+	//if (($_SESSION["perfil"]=="admin") || ($_SESSION["perfil"]=="webmaster")) $sSesion .= ", {prjAlias: 'gui', " . get_project_lang(1) . "}";
+	if ( $_SESSION["perfil"]=="webmaster" ) $sSesion .= ", {prjAlias: 'gui', " . get_project_lang(1) . "}";
 	$sSesion .= "]}";
 	
 	//echo $sSesion;

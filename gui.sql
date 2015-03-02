@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.0.4
+-- version 4.2.11
 -- http://www.phpmyadmin.net
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 19-02-2015 a las 18:51:51
--- Versión del servidor: 5.5.32
--- Versión de PHP: 5.4.16
+-- Servidor: localhost
+-- Tiempo de generación: 02-03-2015 a las 10:16:53
+-- Versión del servidor: 5.6.21
+-- Versión de PHP: 5.6.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -19,8 +19,6 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `gui`
 --
-CREATE DATABASE IF NOT EXISTS `gui` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `gui`;
 
 -- --------------------------------------------------------
 
@@ -29,15 +27,14 @@ USE `gui`;
 --
 
 CREATE TABLE IF NOT EXISTS `com_editform` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+`id` int(11) NOT NULL,
   `idComponente` int(11) NOT NULL,
   `titulo` varchar(200) NOT NULL,
   `sSQL` text NOT NULL,
   `columnaId` varchar(50) NOT NULL,
   `comboList` text,
-  `campos` text NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+  `campos` text NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `com_editform`
@@ -53,23 +50,24 @@ INSERT INTO `com_editform` (`id`, `idComponente`, `titulo`, `sSQL`, `columnaId`,
 --
 
 CREATE TABLE IF NOT EXISTS `com_form` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+`id` int(11) NOT NULL,
   `idComponente` int(11) NOT NULL,
   `titulo` varchar(100) NOT NULL,
   `windowData` text,
-  `formData` text NOT NULL,
-  `jsData` text NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+  `formData` text NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `com_form`
 --
 
-INSERT INTO `com_form` (`id`, `idComponente`, `titulo`, `windowData`, `formData`, `jsData`) VALUES
-(1, 7, 'Evento', 'title: ''Eventos'', height : 250, width : 450', 'var guiForm = Ext.create(''Ext.form.Panel'', {\n	bodyPadding: 5,\n	width: 350,\n	url: ''comp/manualForm/form_save.php'', layout: ''anchor'', defaults: { anchor: ''100%''},\n	defaultType: ''textfield'',\n	items: [\n{ xtype:''hidden'', name:''table''},\n{ xtype:''hidden'', name:''id_value''},\n{\n    xtype:"textfield",\n    allowBlank: false,\n    fieldLabel:"Titulo",\n    name:"titulo"\n  },{\n    xtype:"textareafield",\n    allowBlank: false,\n    fieldLabel:"Descripcion",\n    name:"descripcion"\n  },{\n    xtype:"datefield",\n    allowBlank: false,\n    dateFormat: ''d/m/Y'',\n    fieldLabel:"Fecha",\n    name:"fecha"\n  }],\n	buttons: [\n{text: ''Reset'', handler: function() { this.up(''form'').getForm().reset(); }}, { text: ''Submit'', formBind: true, disabled: true, handler: function() { var form = this.up(''form'').getForm(); if (form.isValid()) { form.submit({	 success: function(form, action) { Ext.Msg.alert(''Success'', action.result.msg);}, failure: function(form, action) { Ext.Msg.alert(''Failed'', action.result.msg); }}); } } }\n	] ,\n	listeners: { \n		afterrender: function(component, eOpts) {\n			if ( id_value > 0)  this.load({ url: ''comp/manualForm/form_load.php?table=evento&id_value='' + id_value, waitMsg : ''loading....'' });\n		}\n	}\n\n});', ''),
-(2, 8, 'Noticia', 'title: ''Simple Form'', height : 450, width : 850', 'Ext.define(''combo_model_id_tipo'', {\r\n	extend: ''Ext.data.Model'',\r\n	fields: [{name: ''id'', type:''int''}, {name:''descr'', type:''string''}]\r\n});\r\nvar id_tipo_store = Ext.create(''Ext.data.Store'', {\r\n	model: ''combo_model_id_tipo'',\r\n	proxy: {\r\n		async : false,\r\n		type: ''ajax'',\r\n		url: ''comp/manualForm/select.php?action=load&table=tipos_noticia'',\r\n		reader: {\r\n			type: ''json'',\r\n			root: ''data''\r\n		}\r\n	},\r\n	autoLoad: true\r\n	,root: ''data''\r\n});\r\n \r\n\r\nvar guiForm = Ext.create(''Ext.form.Panel'', {\r\n	bodyPadding: 5,\r\n	width: 350,\r\n	url: ''comp/manualForm/form_save.php'', layout: ''anchor'', /*defaults: { anchor: ''100%''},*/\r\n	defaultType: ''textfield'',\r\n	items: [\r\n		{fieldLabel: ''titulo'', name: ''titulo'', allowBlank: false },\r\n		{fieldLabel: ''Breve'', name: ''breve'', allowBlank: false, anchor: ''100%'' },\r\n		{xtype: ''htmleditor'', name: ''descripcion'', fieldLabel: ''Descripción'',anchor: ''100%''},\r\n		{fieldLabel: ''Fecha'', name: ''fecha'', xtype: ''datefield'', tooltip: ''Fecha de publicacion'', width: 250},\r\n		{xtype: ''combobox'', id: ''id_tipo'', name: ''id_tipo'', fieldLabel: ''Tipo'', store: id_tipo_store, displayField: ''descr'', valueField: ''id'', hiddenName: ''id_tipo'', mode: ''remote'', width: 250}\r\n	],\r\n	buttons: [\r\n		{ text: ''Submit'',\r\n		  formBind: true,\r\n		  disabled: true,\r\n		  handler: function() {\r\n			var form = this.up(''form'').getForm();\r\n			if (form.isValid()) {\r\n				form.submit({\r\n					success: function(form, action) {\r\n						Ext.Msg.alert(''Success'', action.result.msg);\r\n					},\r\n					failure: function(form, action) {\r\n						Ext.Msg.alert(''Failed'', action.result.msg); \r\n					}\r\n				});\r\n			}\r\n		  }\r\n		}\r\n	] ,\r\n	listeners: { \r\n		afterrender: function(component, eOpts) {\r\n			if ( id_value > 0)  this.load({ url: ''comp/manualForm/form_load.php?table=noticia&id_value='' + id_value, waitMsg : ''loading....'' });\r\n		}\r\n	}\r\n\r\n});', ''),
-(3, 10, 'Enlaces', 'title: ''Eventos'', height : 200, width : 450', 'var guiForm = Ext.create(''Ext.form.Panel'', {\r\n	bodyPadding: 5,\r\n	width: 350,\r\n	url: ''comp/manualForm/form_save.php'', layout: ''anchor'', defaults: { anchor: ''100%''},\r\n	defaultType: ''textfield'',\r\n	items: [\r\n{ xtype:''hidden'', name:''table''},\r\n{ xtype:''hidden'', name:''id_value''},\r\n{\r\n    xtype:"textfield",\r\n    allowBlank: false,\r\n    fieldLabel:"Descripcion",\r\n    name:"descripcion"\r\n  },{\r\n    xtype:"textfield",\r\n    allowBlank: false,\r\n    fieldLabel:"Url",\r\n    name:"url"\r\n  }],\r\n	buttons: [\r\n{text: ''Reset'', handler: function() { this.up(''form'').getForm().reset(); }}, { text: ''Submit'', formBind: true, disabled: true, handler: function() { var form = this.up(''form'').getForm(); if (form.isValid()) { form.submit({	 success: function(form, action) { Ext.Msg.alert(''Success'', action.result.msg);}, failure: function(form, action) { Ext.Msg.alert(''Failed'', action.result.msg); }}); } } }\r\n	] ,\r\n	listeners: { \r\n		afterrender: function(component, eOpts) {\r\n			if ( id_value > 0)  this.load({ url: ''comp/manualForm/form_load.php?table=enlace&id_value='' + id_value, waitMsg : ''loading....'' });\r\n		}\r\n	}\r\n\r\n});', '');
+INSERT INTO `com_form` (`id`, `idComponente`, `titulo`, `windowData`, `formData`) VALUES
+(1, 7, 'Evento', 'title: ''Eventos'', height : 250, width : 450', 'var guiForm = Ext.create(''Ext.form.Panel'', {\r\n	bodyPadding: 5,\r\n	width: 350,\r\n	url: ''comp/manualForm/form_save.php'', layout: ''anchor'', defaults: { anchor: ''100%''},\r\n	defaultType: ''textfield'',\r\n	items: [\r\n{ xtype:''hidden'', name:''table''},\r\n{ xtype:''hidden'', name:''id_value''},\r\n{\r\n    xtype:"textfield",\r\n    allowBlank: false,\r\n    fieldLabel:"Titulo",\r\n    name:"titulo"\r\n  },{\r\n    xtype:"textareafield",\r\n    allowBlank: false,\r\n    fieldLabel:"Descripcion",\r\n    name:"descripcion"\r\n  },{\r\n    xtype:"datefield",\r\n    allowBlank: false,\r\n    dateFormat: ''d/m/Y'',\r\n    fieldLabel:"Fecha",\r\n    name:"fecha"\r\n  }],\r\n	buttons: [\r\n{text: ''Reset'', handler: function() { this.up(''form'').getForm().reset(); }}, { text: ''Submit'', formBind: true, disabled: true, handler: function() { var form = this.up(''form'').getForm(); if (form.isValid()) { form.submit({	 success: function(form, action) { Ext.Msg.alert(''Success'', action.result.msg);}, failure: function(form, action) { Ext.Msg.alert(''Failed'', action.result.msg); }}); } } }\r\n	] ,\r\n	listeners: { \r\n		afterrender: function(component, eOpts) {\r\n			this.load({ url: ''comp/manualForm/form_load.php?table=evento&id_value='' + id_value, waitMsg : ''loading....'' });\r\n		}\r\n	}\r\n\r\n});'),
+(2, 8, 'Noticia', 'title: ''Simple Form'', height : 450, width : 850', 'Ext.define(''combo_model_id_tipo'', {\r\n	extend: ''Ext.data.Model'',\r\n	fields: [{name: ''id'', type:''int''}, {name:''descr'', type:''string''}]\r\n});\r\nvar id_tipo_store = Ext.create(''Ext.data.Store'', {\r\n	model: ''combo_model_id_tipo'',\r\n	proxy: {\r\n		async : false,\r\n		type: ''ajax'',\r\n		url: ''comp/manualForm/select.php?action=load&table=tipos_noticia'',\r\n		reader: {\r\n			type: ''json'',\r\n			root: ''data''\r\n		}\r\n	},\r\n	autoLoad: true\r\n	,root: ''data''\r\n});\r\n \r\n\r\nvar guiForm = Ext.create(''Ext.form.Panel'', {\r\n	bodyPadding: 5,\r\n	width: 350,\r\n	url: ''comp/manualForm/form_save.php'', layout: ''anchor'', /*defaults: { anchor: ''100%''},*/\r\n	defaultType: ''textfield'',\r\n	items: [\r\n{ xtype:''hidden'', name:''table''},\r\n{ xtype:''hidden'', name:''id_value''},\r\n		{fieldLabel: ''titulo'', name: ''titulo'', allowBlank: false },\r\n		{fieldLabel: ''Breve'', name: ''breve'', allowBlank: false, anchor: ''100%'' },\r\n		{xtype: ''htmleditor'', name: ''descripcion'', fieldLabel: ''Descripción'',anchor: ''100%''},\r\n		{fieldLabel: ''Fecha'', name: ''fecha'', xtype: ''datefield'', tooltip: ''Fecha de publicacion'', width: 250},\r\n		{xtype: ''combobox'', id: ''id_tipo'', name: ''id_tipo'', fieldLabel: ''Tipo'', store: id_tipo_store, displayField: ''descr'', valueField: ''id'', hiddenName: ''id_tipo'', mode: ''remote'', width: 250}\r\n	],\r\n	buttons: [\r\n		{ text: ''Submit'',\r\n		  formBind: true,\r\n		  disabled: true,\r\n		  handler: function() {\r\n			var form = this.up(''form'').getForm();\r\n			if (form.isValid()) {\r\n				form.submit({\r\n					success: function(form, action) {\r\n						Ext.Msg.alert(''Success'', action.result.msg);\r\n					},\r\n					failure: function(form, action) {\r\n						Ext.Msg.alert(''Failed'', action.result.msg); \r\n					}\r\n				});\r\n			}\r\n		  }\r\n		}\r\n	] ,\r\n	listeners: { \r\n		afterrender: function(component, eOpts) {\r\n			this.load({ url: ''comp/manualForm/form_load.php?table=noticia&id_value='' + id_value, waitMsg : ''loading....'' });\r\n		}\r\n	}\r\n\r\n});'),
+(3, 10, 'Enlaces', 'title: ''Eventos'', height : 200, width : 450', 'var guiForm = Ext.create(''Ext.form.Panel'', {\r\n	bodyPadding: 5,\r\n	width: 350,\r\n	url: ''comp/manualForm/form_save.php'', layout: ''anchor'', defaults: { anchor: ''100%''},\r\n	defaultType: ''textfield'',\r\n	items: [\r\n{ xtype:''hidden'', name:''table''},\r\n{ xtype:''hidden'', name:''id_value''},\r\n{\r\n    xtype:"textfield",\r\n    allowBlank: false,\r\n    fieldLabel:"Descripcion",\r\n    name:"descripcion"\r\n  },{\r\n    xtype:"textfield",\r\n    allowBlank: false,\r\n    fieldLabel:"Url",\r\n    name:"url"\r\n  }],\r\n	buttons: [\r\n{text: ''Reset'', handler: function() { this.up(''form'').getForm().reset(); }}, { text: ''Submit'', formBind: true, disabled: true, handler: function() { var form = this.up(''form'').getForm(); if (form.isValid()) { form.submit({	 success: function(form, action) { Ext.Msg.alert(''Success'', action.result.msg);}, failure: function(form, action) { Ext.Msg.alert(''Failed'', action.result.msg); }}); } } }\r\n	] ,\r\n	listeners: { \r\n		afterrender: function(component, eOpts) {\r\n			this.load({ url: ''comp/manualForm/form_load.php?table=enlace&id_value='' + id_value, waitMsg : ''loading....'' });\r\n		}\r\n	}\r\n\r\n});'),
+(4, 9, 'Fotografías', 'title: ''Fotografías'', height : 200, width : 450', 'var guiForm = Ext.create(''Ext.form.Panel'', {\r\n	bodyPadding: 5,\r\n	width: 350,\r\n	url: ''comp/manualForm/form_save.php'', layout: ''anchor'', defaults: { anchor: ''100%''},\r\n	defaultType: ''textfield'',\r\n	items: [\r\n{ xtype:''hidden'', name:''table''},\r\n{ xtype:''hidden'', name:''id_value''},\r\n{\r\n    xtype:"textfield",\r\n    allowBlank: false,\r\n    fieldLabel:"Titulo",\r\n    name:"titulo"\r\n  },{\r\n    xtype:"textfield",\r\n    allowBlank: false,\r\n    fieldLabel:"Descripcion",\r\n    name:"descripcion"\r\n  },{\r\n            xtype: ''filefield'',\r\n            id: ''form-file'',\r\n            emptyText: ''Selecciona una imagen'',\r\n            fieldLabel: ''Fotografías'',\r\n            name: ''foto'',\r\n            buttonText: '''',\r\n            buttonConfig: {\r\n                iconCls: ''upload-icon''\r\n            }\r\n        }\r\n],\r\n	buttons: [\r\n{text: ''Reset'', handler: function() { this.up(''form'').getForm().reset(); }}, { text: ''Submit'', formBind: true, disabled: true, handler: function() { var form = this.up(''form'').getForm(); if (form.isValid()) { form.submit({	 success: function(form, action) { Ext.Msg.alert(''Success'', action.result.msg);}, failure: function(form, action) { Ext.Msg.alert(''Failed'', action.result.msg); }}); } } }\r\n	] ,\r\n	listeners: { \r\n		afterrender: function(component, eOpts) {\r\n			this.load({ url: ''comp/manualForm/form_load.php?table=fotografias&id_value='' + id_value, waitMsg : ''loading....'' });\r\n		}\r\n	}\r\n\r\n});'),
+(5, 11, 'Carreras', 'title: ''Carreras'', height : 400, width : 650', 'var guiForm = Ext.create(''Ext.form.Panel'', {\r\n	bodyPadding: 5,\r\n	width: 350,\r\n	url: ''comp/manualForm/form_save.php'', layout: ''anchor'', defaults: { anchor: ''100%''},\r\n	defaultType: ''textfield'',\r\n	items: [\r\n{ xtype:''hidden'', name:''table''},\r\n{ xtype:''hidden'', name:''id_value''},\r\n\r\n{\r\n	xtype:"textfield",\r\n	allowBlank: false,\r\n	fieldLabel:"Carrera",\r\n	name:"nombre"\r\n},{\r\n	xtype:"datefield",\r\n	allowBlank: false,\r\n	fieldLabel:"Fecha",\r\n	name:"fecha",\r\nanchor: ''35%''\r\n},{\r\n	xtype: ''filefield'',\r\n	id: ''form-file'',\r\n	emptyText: ''Selecciona una imagen'',\r\n	fieldLabel: ''Cartel'',\r\n	name: ''cartel'',\r\n	buttonText: '''',\r\n	buttonConfig: {\r\n		iconCls: ''upload-icon''\r\n	}\r\n},\r\n{\r\n	xtype:"tabpanel",\r\n	activeTab:0,\r\n	items:[\r\n	{\r\n		xtype:"panel",\r\n		title:"Reglamento",\r\n		items:[{\r\n			xtype:"htmleditor", name:"reglamento", width: "100%"\r\n		}]\r\n	},{\r\n		xtype:"panel",\r\n		title:"Alojamientos",\r\n		items:[{xtype:"htmleditor", name:"alojamientos", width: "100%"\r\n		}]\r\n	},{\r\n		xtype:"panel",\r\n		title:"Clasificación",\r\n		items:[{ xtype:"htmleditor", name:"clasificacion", width: "100%"\r\n		}]\r\n	}]\r\n}\r\n\r\n],\r\n	buttons: [\r\n{text: ''Reset'', handler: function() { this.up(''form'').getForm().reset(); }}, { text: ''Submit'', formBind: true, disabled: true, handler: function() { var form = this.up(''form'').getForm(); if (form.isValid()) { form.submit({	 success: function(form, action) { Ext.Msg.alert(''Success'', action.result.msg);}, failure: function(form, action) { Ext.Msg.alert(''Failed'', action.result.msg); }}); } } }\r\n	] ,\r\n	listeners: { \r\n		afterrender: function(component, eOpts) {\r\n			this.load({ url: ''comp/manualForm/form_load.php?table=carreras&id_value='' + id_value, waitMsg : ''loading....'' });\r\n		}\r\n	}\r\n\r\n});'),
+(6, 18, 'Tipos noticia', 'title: ''Tipos de noticia'', height : 100, width : 350', 'var guiForm = Ext.create(''Ext.form.Panel'', {\r\n	bodyPadding: 5,\r\n	width: 350,\r\n	url: ''comp/manualForm/form_save.php'', layout: ''anchor'', defaults: { anchor: ''100%''},\r\n	defaultType: ''textfield'',\r\n	items: [\r\n{ xtype:''hidden'', name:''table''},\r\n{ xtype:''hidden'', name:''id_value''},\r\n{\r\n	xtype:"textfield",\r\n	allowBlank: false,\r\n	fieldLabel:"Tipo de noticia",\r\n	name:"descripcion"\r\n}],\r\n	buttons: [\r\n{text: ''Reset'', handler: function() { this.up(''form'').getForm().reset(); }}, { text: ''Submit'', formBind: true, disabled: true, handler: function() { var form = this.up(''form'').getForm(); if (form.isValid()) { form.submit({	 success: function(form, action) { Ext.getCmp(''winFrm_alias'').close();\r\n\r\n var tabPanel = Ext.getCmp(''GUITab'');\r\n activeTab = tabPanel.getActiveTab();\r\n	var obj = activeTab.items.items[0];\r\n	obj.store.reload();\r\n }, failure: function(form, action) { Ext.Msg.alert(''Failed'', action.result.msg); }}); } } }\r\n	] ,\r\n	listeners: { \r\n		afterrender: function(component, eOpts) {\r\n			this.load({ url: ''comp/manualForm/form_load.php?table=tipos_noticia&id_value='' + id_value, waitMsg : ''loading....'' });\r\n		}\r\n	}\r\n\r\n});');
 
 -- --------------------------------------------------------
 
@@ -78,15 +76,14 @@ INSERT INTO `com_form` (`id`, `idComponente`, `titulo`, `windowData`, `formData`
 --
 
 CREATE TABLE IF NOT EXISTS `com_listgrid` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+`id` int(11) NOT NULL,
   `idComponente` int(11) NOT NULL,
   `titulo` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
   `sSQL` text COLLATE utf8_unicode_ci NOT NULL,
   `columnaId` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `Campos` text COLLATE utf8_unicode_ci NOT NULL,
-  `Columnas` text COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=7 ;
+  `Columnas` text COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `com_listgrid`
@@ -98,7 +95,10 @@ INSERT INTO `com_listgrid` (`id`, `idComponente`, `titulo`, `sSQL`, `columnaId`,
 (3, 17, 'mnuLanguages', 'SELECT id, nombre, clave FROM gui_idiomas WHERE 1', 'id', '[{"name": "id", "type": "int"}, {"name": "nombre", "type": "string"}, {"name": "clave", "type": "string"}]', '[{"dataIndex": "id", "text": "Id", "filterable": true}, {"dataIndex": "nombre", "text": "Nombre", "filter": {"type": "string"}}, {"dataIndex": "clave", "text": "Clave", "filter": {"type": "string"}}]'),
 (4, 6, 'mnuProjects', 'SELECT p.id AS id, p.alias AS alias, pi.nombre AS nombre, pi.descripcion AS descripcion FROM gui_proyectos p INNER JOIN gui_proyectos_i18n pi ON p.id = pi.idProyecto WHERE 1', 'id', '[{"name": "id", "type": "int"}, {"name": "alias", "type": "string"}, {"name": "nombre", "type": "string"}, {"name": "descripcion", "type": "string"}]', '[{"dataIndex": "id", "text": "Id", "filterable": true}, {"dataIndex": "alias", "text": "Alias", "filter": {"type": "string"}}, {"dataIndex": "nombre", "text": "Nombre", "filter": {"type": "string"}}, {"dataIndex": "descripcion", "text": "Descripcion", "filter": {"type": "string"}}]'),
 (5, 7, 'Eventos', 'SELECT id, titulo, fecha FROM pro_eventos WHERE 1', 'id', '[{"name": "id", "type": "int"}, {"name": "titulo", "type": "string"}, {"name": "fecha", "type": "date"}]', '[{"dataIndex": "id", "text": "Id", "filterable" : true}, {"dataIndex": "titulo", "text": "Título", "id": "titulo", "filter": {"type": "string"}}, {"dataIndex": "fecha", "text": "Fecha", "id": "fecha", "filter": {"type": "date"}, "xtype": "datecolumn", "format":"d/m/Y"}]'),
-(6, 8, 'Noticias', 'SELECT n.id, n.titulo, n.fecha, p.descripcion FROM pro_noticias n INNER JOIN pro_tipos_noticia p ON n.id_tipo = p.id', 'id', '[{"name": "id", "type": "int"}, {"name": "titulo", "type": "string"}, {"name": "descripcion", "type": "string"}, {"name": "fecha", "type": "date"}]', '[{"dataIndex": "id", "text": "Id", "filterable" : true}, {"dataIndex": "titulo", "text": "Título", "id": "titulo", "filter": {"type": "string"}}, {"dataIndex": "descripcion", "text": "Descripción", "id": "descripcion", "filter": {"type": "string"}}, {"dataIndex": "fecha", "text": "Fecha", "id": "fecha", "filter": {"type": "date"}, "xtype": "datecolumn", "format":"d/m/Y"}]');
+(6, 8, 'Noticias', 'SELECT n.id, n.titulo, n.fecha, p.descripcion FROM pro_noticias n INNER JOIN pro_tipos_noticia p ON n.id_tipo = p.id WHERE 1', 'id', '[{"name": "id", "type": "int"}, {"name": "titulo", "type": "string"}, {"name": "descripcion", "type": "string"}, {"name": "fecha", "type": "date"}]', '[{"dataIndex": "id", "text": "Id", "filterable" : true}, {"dataIndex": "titulo", "text": "Título", "id": "titulo", "filter": {"type": "string"}}, {"dataIndex": "descripcion", "text": "Descripción", "id": "descripcion", "filter": {"type": "string"}}, {"dataIndex": "fecha", "text": "Fecha", "id": "fecha", "filter": {"type": "date"}, "xtype": "datecolumn", "format":"d/m/Y"}]'),
+(7, 9, 'Fotografías', 'SELECT id, titulo, descripcion, foto FROM pro_fotografias WHERE 1', 'id', '[{"name": "id", "type": "int"}, {"name": "titulo", "type": "string"}, {"name": "descripcion", "type": "string"}, {"name": "foto", "type": "string"}]', '[{"dataIndex": "id", "text": "Id", "filterable" : false, "hidden": true, "hideable": false}, {"dataIndex": "titulo", "text": "Título", "id": "titulo", "width": "35%", "filter": {"type": "string"}}, {"dataIndex": "descripcion", "text": "Descripción", "id": "descripcion", "width": "35%", "filter": {"type": "string"}}, {"dataIndex": "foto", "text": "Foto", "flex": 1, "width": "30%", "filterable" : false, "renderer": "renderPhotoImage" }]\r\n\r\n'),
+(8, 11, 'Carreras', 'SELECT id, nombre, fecha, cartel FROM pro_carreras WHERE 1', 'id', '[{"name": "id", "type": "int"}, {"name": "nombre", "type": "string"}, {"name": "fecha", "type": "string"}, {"name": "cartel", "type": "string"}]', '[{"dataIndex": "id", "text": "Id", "filterable" : false, "hidden": true, "hideable": false}, {"dataIndex": "nombre", "text": "Carrera", "filter": {"type": "string"}, "width": "35%"}, {"dataIndex": "fecha", "text": "Fecha", "filter": {"type": "date"}, "xtype": "datecolumn", "format":"d/m/Y", "width": "25%"}, {"dataIndex": "cartel", "text": "Cartel", "flex": 1, "filterable" : false, "renderer": "renderRaceImage", "width": "40%" }]\r\n\r\n\r\n'),
+(10, 18, 'Tipos noticia', 'SELECT id, descripcion FROM `pro_tipos_noticia` WHERE 1', 'id', '[{"name": "id", "type": "int"}, {"name": "descripcion", "type": "string"}]', '[{"dataIndex": "id", "text": "Id", "filterable" : false, "hidden": true, "hideable": false}, {"dataIndex": "descripcion", "text": "Tipo de noticia", "filter": {"type": "string"}}]\r\n');
 
 -- --------------------------------------------------------
 
@@ -107,7 +107,7 @@ INSERT INTO `com_listgrid` (`id`, `idComponente`, `titulo`, `sSQL`, `columnaId`,
 --
 
 CREATE TABLE IF NOT EXISTS `com_listgrid_adv` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+`id` int(11) NOT NULL,
   `idComponente` int(11) NOT NULL,
   `titulo` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
   `titulo_filtro` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
@@ -118,9 +118,8 @@ CREATE TABLE IF NOT EXISTS `com_listgrid_adv` (
   `Campos` text COLLATE utf8_unicode_ci NOT NULL,
   `Columnas` text COLLATE utf8_unicode_ci NOT NULL,
   `CamposDisponibles` text COLLATE utf8_unicode_ci NOT NULL,
-  `porDefecto` bit(1) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
+  `porDefecto` bit(1) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `com_listgrid_adv`
@@ -137,11 +136,10 @@ INSERT INTO `com_listgrid_adv` (`id`, `idComponente`, `titulo`, `titulo_filtro`,
 --
 
 CREATE TABLE IF NOT EXISTS `gui_idiomas` (
-  `id` int(5) NOT NULL AUTO_INCREMENT,
+`id` int(5) NOT NULL,
   `clave` varchar(5) NOT NULL,
-  `nombre` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+  `nombre` varchar(255) NOT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `gui_idiomas`
@@ -191,10 +189,9 @@ INSERT INTO `gui_locales` (`idProyecto`, `aliasProyecto`, `clave`, `ca_ES`, `es_
 --
 
 CREATE TABLE IF NOT EXISTS `gui_perfiles` (
-  `id` int(5) NOT NULL AUTO_INCREMENT,
-  `alias` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=8 ;
+`id` int(5) NOT NULL,
+  `alias` varchar(20) COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `gui_perfiles`
@@ -252,13 +249,12 @@ INSERT INTO `gui_perfiles_i18n` (`idPerfil`, `idIdioma`, `Nombre`, `Descripcion`
 --
 
 CREATE TABLE IF NOT EXISTS `gui_proyectos` (
-  `id` int(5) NOT NULL AUTO_INCREMENT,
+`id` int(5) NOT NULL,
   `alias` varchar(255) NOT NULL,
   `home` varchar(255) DEFAULT NULL,
   `dbName` varchar(255) DEFAULT NULL,
-  `multilang` enum('S','N') NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+  `multilang` enum('S','N') NOT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `gui_proyectos`
@@ -278,8 +274,7 @@ CREATE TABLE IF NOT EXISTS `gui_proyectos_i18n` (
   `idProyecto` int(5) NOT NULL,
   `idIdioma` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
   `nombre` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
-  `descripcion` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`idProyecto`,`idIdioma`)
+  `descripcion` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
@@ -301,8 +296,7 @@ INSERT INTO `gui_proyectos_i18n` (`idProyecto`, `idIdioma`, `nombre`, `descripci
 CREATE TABLE IF NOT EXISTS `gui_proyectos_idiomas` (
   `idProyecto` int(5) NOT NULL,
   `idIdioma` varchar(5) NOT NULL,
-  `defecto` enum('S','N') NOT NULL,
-  PRIMARY KEY (`idProyecto`,`idIdioma`)
+  `defecto` enum('S','N') NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -322,16 +316,15 @@ INSERT INTO `gui_proyectos_idiomas` (`idProyecto`, `idIdioma`, `defecto`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `gui_proyectos_nodos` (
-  `id` int(5) NOT NULL AUTO_INCREMENT,
+`id` int(5) NOT NULL,
   `idProyecto` int(5) NOT NULL,
   `idNodoPadre` int(5) DEFAULT NULL,
   `alias` varchar(150) COLLATE utf8_unicode_ci DEFAULT NULL,
   `titulo` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
   `icono` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
   `listado` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `edicion` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=18 ;
+  `edicion` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `gui_proyectos_nodos`
@@ -343,14 +336,15 @@ INSERT INTO `gui_proyectos_nodos` (`id`, `idProyecto`, `idNodoPadre`, `alias`, `
 (3, 1, 1, 'gui_perfiles', 'mnuProfiles', NULL, 'com_listgrid', NULL),
 (7, 2, NULL, 'eventos', 'eventos', NULL, 'com_listgrid', 'com_form'),
 (8, 2, NULL, 'noticias', 'noticias', NULL, 'com_listgrid', 'com_form'),
-(9, 2, NULL, 'fotografias', 'fotografias', NULL, '2', NULL),
+(9, 2, NULL, 'fotografias', 'fotografias', NULL, 'com_listgrid', 'com_form'),
 (10, 2, NULL, 'enlaces', 'enlaces', NULL, 'com_listgrid_adv', 'com_form'),
-(11, 2, NULL, 'carreras', 'carreras', NULL, '2', NULL),
+(11, 2, NULL, 'carreras', 'carreras', NULL, 'com_listgrid', 'com_form'),
 (4, 1, NULL, 'treeConfig', 'treeConfig', NULL, NULL, NULL),
 (6, 1, 4, 'gui_proyectos', 'mnuProjects', NULL, 'com_listgrid', NULL),
 (15, 2, NULL, 'config', 'config', NULL, NULL, NULL),
-(16, 2, 15, 'nodes', 'nodes', NULL, NULL, NULL),
-(17, 1, 4, 'gui_idiomas', 'mnuLanguages', NULL, 'com_listgrid', NULL);
+(16, 3, 15, 'nodes', 'nodes', NULL, NULL, NULL),
+(17, 1, 4, 'gui_idiomas', 'mnuLanguages', NULL, 'com_listgrid', NULL),
+(18, 2, 15, 'tipos_noticia', 'Tipos noticia', NULL, 'com_listgrid', 'com_form');
 
 -- --------------------------------------------------------
 
@@ -360,8 +354,7 @@ INSERT INTO `gui_proyectos_nodos` (`id`, `idProyecto`, `idNodoPadre`, `alias`, `
 
 CREATE TABLE IF NOT EXISTS `gui_proyectos_usuarios` (
   `idProyecto` int(5) NOT NULL,
-  `idUsuario` int(5) NOT NULL,
-  PRIMARY KEY (`idProyecto`,`idUsuario`)
+  `idUsuario` int(5) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -379,7 +372,7 @@ INSERT INTO `gui_proyectos_usuarios` (`idProyecto`, `idUsuario`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `gui_usuarios` (
-  `id` int(5) NOT NULL AUTO_INCREMENT,
+`id` int(5) NOT NULL,
   `idPerfil` int(5) NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(25) NOT NULL,
@@ -387,18 +380,41 @@ CREATE TABLE IF NOT EXISTS `gui_usuarios` (
   `apellidos` varchar(255) DEFAULT NULL,
   `mail` varchar(255) DEFAULT NULL,
   `idIdioma` varchar(5) NOT NULL,
-  `foto` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED AUTO_INCREMENT=3 ;
+  `foto` varchar(255) DEFAULT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
 
 --
 -- Volcado de datos para la tabla `gui_usuarios`
 --
 
 INSERT INTO `gui_usuarios` (`id`, `idPerfil`, `username`, `password`, `nombre`, `apellidos`, `mail`, `idIdioma`, `foto`) VALUES
-(1, 4, 'web', 'web', 'Administrador', 'General', NULL, 'es_ES', 'foto_dani.jpg'),
-(2, 3, 'editor', 'editor', 'Usuario', 'Editor', NULL, 'es_ES', NULL);
+(1, 5, 'web', 'web', 'Administrador', 'General', NULL, 'es_ES', 'foto_dani.jpg'),
+(2, 3, 'editor', 'editor', 'Usuario', 'Editor', NULL, 'es_ES', NULL),
+(3, 4, 'admin', 'admin', 'Administrador', 'Proyecto', 'info@danielluna.net', 'es_ES', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pro_carreras`
+--
+
+CREATE TABLE IF NOT EXISTS `pro_carreras` (
+`id` int(11) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `fecha` date DEFAULT NULL,
+  `clasificacion` text,
+  `reglamento` text,
+  `cartel` varchar(255) DEFAULT NULL,
+  `alojamientos` text
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `pro_carreras`
+--
+
+INSERT INTO `pro_carreras` (`id`, `nombre`, `fecha`, `clasificacion`, `reglamento`, `cartel`, `alojamientos`) VALUES
+(1, 'primera carrera', '2015-02-27', '<i>aun no hay clasificación disponible.</i>', 'Reglamento de la carerar:<div style="color: rgb(0, 0, 0);"><br></div><div style="color: rgb(0, 0, 0);"><ul><li>no se puede esto&nbsp;<br></li><li>no se puede lo otro<br></li><li>no se puede lo de mas allá<br></li></ul></div><div style="color: rgb(0, 0, 0);"><br></div><div>A <font color="#ff0000">correr</font></div>', '11869677_3885119_lz.jpg', '<span style="background-color: rgb(255, 255, 255);">Lista de <b>alojamientos</b>:</span><div style="background-color: rgb(255, 255, 255);"><br></div><div style="background-color: rgb(255, 255, 255);"><ol><li>primero<br></li><li>segundo<br></li><li>tercero<br></li><li>y cuarto<br></li></ol></div><div style="background-color: rgb(255, 255, 255);"><br></div><div><span style="background-color: rgb(255, 204, 0);">a correr! ;)</span></div>'),
+(2, 'Segunda carrera', '2015-04-30', '', 'El reglamento no está aun redactado', '9103398_16546457_b.jpg', '');
 
 -- --------------------------------------------------------
 
@@ -407,11 +423,10 @@ INSERT INTO `gui_usuarios` (`id`, `idPerfil`, `username`, `password`, `nombre`, 
 --
 
 CREATE TABLE IF NOT EXISTS `pro_enlaces` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+`id` int(11) NOT NULL,
   `descripcion` varchar(250) NOT NULL,
-  `url` varchar(250) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+  `url` varchar(250) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `pro_enlaces`
@@ -430,12 +445,11 @@ INSERT INTO `pro_enlaces` (`id`, `descripcion`, `url`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `pro_eventos` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+`id` int(11) NOT NULL,
   `titulo` varchar(100) NOT NULL,
   `descripcion` text NOT NULL,
-  `fecha` date NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+  `fecha` date NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `pro_eventos`
@@ -443,7 +457,29 @@ CREATE TABLE IF NOT EXISTS `pro_eventos` (
 
 INSERT INTO `pro_eventos` (`id`, `titulo`, `descripcion`, `fecha`) VALUES
 (1, 'Primer evento', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum', '2014-10-05'),
-(2, 'Evento segundo 2', 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.', '2015-02-09');
+(2, 'Evento segundo 2', 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.', '2015-02-09'),
+(3, 'Nuevo evento guardado', 'Descripción del nuevo evento', '2015-02-21');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pro_fotografias`
+--
+
+CREATE TABLE IF NOT EXISTS `pro_fotografias` (
+`id` int(11) NOT NULL,
+  `titulo` varchar(255) NOT NULL,
+  `descripcion` varchar(255) DEFAULT NULL,
+  `foto` varchar(255) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `pro_fotografias`
+--
+
+INSERT INTO `pro_fotografias` (`id`, `titulo`, `descripcion`, `foto`) VALUES
+(1, 'Ahora sí que es la primera', 'Esto es opcional, supongo que lo puedo borrar si quiero', 'barracus1.png'),
+(2, 'Nueva imagen', 'Vamos que también chuta', '12770940_2996422_lz.jpg');
 
 -- --------------------------------------------------------
 
@@ -452,14 +488,13 @@ INSERT INTO `pro_eventos` (`id`, `titulo`, `descripcion`, `fecha`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `pro_noticias` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+`id` int(11) NOT NULL,
   `titulo` text NOT NULL,
   `descripcion` text NOT NULL,
   `breve` text NOT NULL,
   `id_tipo` int(11) NOT NULL,
-  `fecha` date NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+  `fecha` date NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `pro_noticias`
@@ -468,7 +503,7 @@ CREATE TABLE IF NOT EXISTS `pro_noticias` (
 INSERT INTO `pro_noticias` (`id`, `titulo`, `descripcion`, `breve`, `id_tipo`, `fecha`) VALUES
 (1, 'Primera noticia de prueba para estos', 'Lorem fistrum te voy a borrar el cerito te va a hasé pupitaa a wan se calle ustée diodenoo torpedo jarl condemor benemeritaar. A gramenawer por la gloria de mi madre a wan no te digo trigo por no llamarte Rodrigor. Te va a hasé pupitaa torpedo no puedor me cago en tus muelas no te digo trigo por no llamarte Rodrigor hasta luego Lucas jarl está la cosa muy malar mamaar. Papaar papaar torpedo qué dise usteer va usté muy cargadoo. Ese hombree pecador diodeno a wan condemor apetecan mamaar tiene musho peligro benemeritaar. Amatomaa hasta luego Lucas a gramenawer ese hombree hasta luego Lucas diodenoo llevame al sircoo al ataquerl papaar papaar. Ahorarr por la gloria de mi madre amatomaa a gramenawer sexuarl no te digo trigo por no llamarte Rodrigor hasta luego Lucas quietooor amatomaa.', 'Lorem fistrum te voy a borrar el cerito te va a hasé pupitaa a wan se calle ustée diodenoo torpedo jarl condemor benemeritaar.', 1, '2014-10-19'),
 (2, 'Segunda noticia', 'Lorem fistrum no te digo trigo por no llamarte Rodrigor a gramenawer tiene musho peligro fistro jarl te va a hasé pupitaa hasta luego Lucas al ataquerl fistro. Me cago en tus muelas de la pradera al ataquerl jarl llevame al sircoo sexuarl. Caballo blanco caballo negroorl benemeritaar ese pedazo de va usté muy cargadoo está la cosa muy malar ese pedazo de a wan. Torpedo diodenoo qué dise usteer va usté muy cargadoo ese hombree te va a hasé pupitaa hasta luego Lucas sexuarl no te digo trigo por no llamarte Rodrigor me cago en tus muelas. Qué dise usteer benemeritaar se calle ustée no puedor te va a hasé pupitaa de la pradera a gramenawer sexuarl mamaar papaar papaar por la gloria de mi madre. Se calle ustée papaar papaar ese pedazo de al ataquerl. A gramenawer te voy a borrar el cerito hasta luego Lucas ahorarr la caidita caballo blanco caballo negroorl papaar papaar pupita benemeritaar te voy a borrar el cerito. Sexuarl te va a hasé pupitaa jarl pupita la caidita por la gloria de mi madre diodenoo.\r\n\r\nLlevame al sircoo torpedo ese que llega a peich diodeno a gramenawer no puedor te voy a borrar el cerito. Benemeritaar apetecan la caidita condemor ese que llega a wan papaar papaar te va a hasé pupitaa. Qué dise usteer de la pradera caballo blanco caballo negroorl por la gloria de mi madre pupita me cago en tus muelas está la cosa muy malar a wan te va a hasé pupitaa por la gloria de mi madre qué dise usteer. A peich está la cosa muy malar se calle ustée fistro diodeno pecador diodeno caballo blanco caballo negroorl ahorarr. Diodenoo a peich la caidita ese hombree te voy a borrar el cerito condemor al ataquerl a wan pupita. Qué dise usteer pupita pecador ese pedazo de fistro de la pradera diodeno se calle ustée amatomaa jarl. Jarl a gramenawer jarl diodenoo te va a hasé pupitaa quietooor ahorarr sexuarl diodenoo ese pedazo de. Te voy a borrar el cerito se calle ustée sexuarl sexuarl se calle ustée me cago en tus muelas tiene musho peligro de la pradera hasta luego Lucas tiene musho peligro amatomaa.', 'Lorem fistrum no te digo trigo por no llamarte Rodrigor a gramenawer tiene musho peligro fistro jarl te va a hasé pupitaa hasta luego Lucas al ataquerl fistro. Me cago en tus muelas de la pradera al ataquerl jarl llevame al sircoo sexuarl. Caballo blanco caballo negroorl benemeritaar ese pedazo de va usté muy cargadoo está la cosa muy malar ese pedazo de a wan.', 1, '2014-10-20'),
-(3, 'Otra noticia más (tercera)', 'Lorem fistrum a gramenawer ahorarr benemeritaar. De la pradera está la cosa muy malar qué dise usteer está la cosa muy malar hasta luego Lucas. Ese pedazo de no te digo trigo por no llamarte Rodrigor ese que llega qué dise usteer. Está la cosa muy malar te voy a borrar el cerito amatomaa caballo blanco caballo negroorl pupita te va a hasé pupitaa no te digo trigo por no llamarte Rodrigor por la gloria de mi madre caballo blanco caballo negroorl. A peich pecador de la pradera ese pedazo de a gramenawer por la gloria de mi madre amatomaa condemor jarl. A peich mamaar diodenoo ese pedazo de papaar papaar a wan al ataquerl por la gloria de mi madre ese que llega. Ahorarr por la gloria de mi madre está la cosa muy malar va usté muy cargadoo a wan va usté muy cargadoo ese hombree.', 'Lorem fistrum a gramenawer ahorarr benemeritaar. De la pradera está la cosa muy malar qué dise usteer está la cosa muy malar hasta luego Lucas. Ese pedazo de no te digo trigo por no llamarte Rodrigor ese que llega qué dise usteer.', 2, '2014-10-19');
+(3, 'Otra noticia más (tercera)', 'Lorem fistrum a gramenawer ahorarr benemeritaar. De la pradera está la cosa muy malar qué dise usteer está la cosa muy malar hasta luego Lucas. Ese pedazo de no te digo trigo por no llamarte Rodrigor ese que llega qué dise usteer. Está la cosa muy malar te voy a borrar el cerito amatomaa caballo blanco caballo negroorl pupita te va a hasé pupitaa no te digo trigo por no llamarte Rodrigor por la gloria de mi madre caballo blanco caballo negroorl. A peich pecador de la pradera ese pedazo de a gramenawer por la gloria de mi madre amatomaa condemor jarl. A peich mamaar diodenoo ese pedazo de papaar papaar a wan al ataquerl por la gloria de mi madre ese que llega. Ahorarr por la gloria de mi madre está la cosa muy malar va usté muy cargadoo a wan va usté muy cargadoo ese hombree.', 'Lorem fistrum a gramenawer ahorarr benemeritaar. De la pradera está la cosa muy malar qué dise usteer está la cosa muy malar hasta luego Lucas. Ese pedazo de no te digo trigo por no llamarte Rodrigor ese que llega qué dise usteer.', 2, '2015-02-22');
 
 -- --------------------------------------------------------
 
@@ -477,10 +512,9 @@ INSERT INTO `pro_noticias` (`id`, `titulo`, `descripcion`, `breve`, `id_tipo`, `
 --
 
 CREATE TABLE IF NOT EXISTS `pro_tipos_noticia` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `descripcion` varchar(150) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+`id` int(11) NOT NULL,
+  `descripcion` varchar(150) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `pro_tipos_noticia`
@@ -488,8 +522,200 @@ CREATE TABLE IF NOT EXISTS `pro_tipos_noticia` (
 
 INSERT INTO `pro_tipos_noticia` (`id`, `descripcion`) VALUES
 (1, 'Internacional'),
-(2, 'Nacional');
+(2, 'Nacional'),
+(3, 'Tipo a modificar');
 
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `com_editform`
+--
+ALTER TABLE `com_editform`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `com_form`
+--
+ALTER TABLE `com_form`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `com_listgrid`
+--
+ALTER TABLE `com_listgrid`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `com_listgrid_adv`
+--
+ALTER TABLE `com_listgrid_adv`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `gui_idiomas`
+--
+ALTER TABLE `gui_idiomas`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `gui_perfiles`
+--
+ALTER TABLE `gui_perfiles`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `gui_proyectos`
+--
+ALTER TABLE `gui_proyectos`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `gui_proyectos_i18n`
+--
+ALTER TABLE `gui_proyectos_i18n`
+ ADD PRIMARY KEY (`idProyecto`,`idIdioma`);
+
+--
+-- Indices de la tabla `gui_proyectos_idiomas`
+--
+ALTER TABLE `gui_proyectos_idiomas`
+ ADD PRIMARY KEY (`idProyecto`,`idIdioma`);
+
+--
+-- Indices de la tabla `gui_proyectos_nodos`
+--
+ALTER TABLE `gui_proyectos_nodos`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `gui_proyectos_usuarios`
+--
+ALTER TABLE `gui_proyectos_usuarios`
+ ADD PRIMARY KEY (`idProyecto`,`idUsuario`);
+
+--
+-- Indices de la tabla `gui_usuarios`
+--
+ALTER TABLE `gui_usuarios`
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `username` (`username`);
+
+--
+-- Indices de la tabla `pro_carreras`
+--
+ALTER TABLE `pro_carreras`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `pro_enlaces`
+--
+ALTER TABLE `pro_enlaces`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `pro_eventos`
+--
+ALTER TABLE `pro_eventos`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `pro_fotografias`
+--
+ALTER TABLE `pro_fotografias`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `pro_noticias`
+--
+ALTER TABLE `pro_noticias`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `pro_tipos_noticia`
+--
+ALTER TABLE `pro_tipos_noticia`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `com_editform`
+--
+ALTER TABLE `com_editform`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT de la tabla `com_form`
+--
+ALTER TABLE `com_form`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+--
+-- AUTO_INCREMENT de la tabla `com_listgrid`
+--
+ALTER TABLE `com_listgrid`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=11;
+--
+-- AUTO_INCREMENT de la tabla `com_listgrid_adv`
+--
+ALTER TABLE `com_listgrid_adv`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT de la tabla `gui_idiomas`
+--
+ALTER TABLE `gui_idiomas`
+MODIFY `id` int(5) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+--
+-- AUTO_INCREMENT de la tabla `gui_perfiles`
+--
+ALTER TABLE `gui_perfiles`
+MODIFY `id` int(5) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+--
+-- AUTO_INCREMENT de la tabla `gui_proyectos`
+--
+ALTER TABLE `gui_proyectos`
+MODIFY `id` int(5) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+--
+-- AUTO_INCREMENT de la tabla `gui_proyectos_nodos`
+--
+ALTER TABLE `gui_proyectos_nodos`
+MODIFY `id` int(5) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=19;
+--
+-- AUTO_INCREMENT de la tabla `gui_usuarios`
+--
+ALTER TABLE `gui_usuarios`
+MODIFY `id` int(5) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+--
+-- AUTO_INCREMENT de la tabla `pro_carreras`
+--
+ALTER TABLE `pro_carreras`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT de la tabla `pro_enlaces`
+--
+ALTER TABLE `pro_enlaces`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+--
+-- AUTO_INCREMENT de la tabla `pro_eventos`
+--
+ALTER TABLE `pro_eventos`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+--
+-- AUTO_INCREMENT de la tabla `pro_fotografias`
+--
+ALTER TABLE `pro_fotografias`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT de la tabla `pro_noticias`
+--
+ALTER TABLE `pro_noticias`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+--
+-- AUTO_INCREMENT de la tabla `pro_tipos_noticia`
+--
+ALTER TABLE `pro_tipos_noticia`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

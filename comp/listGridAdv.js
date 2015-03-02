@@ -84,7 +84,9 @@ Ext.define('comp.listGridAdv', {
 		var grid = this;
 		var config = {
 			border		: false,
+			name		: 'list_component',
 			id			: 'grid_' + idComponente,
+			//id			: 'list_component',
 			store		: gridStore,
 			columns		: filtros,
 			forceFit	: true,

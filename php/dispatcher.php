@@ -38,9 +38,11 @@
 			
 					if ($key == 'titulo') $row[$key] = get_locale ($alias, $value, $_POST['lang']);
 					if ($key == 'Columnas' ) {
-						$arr = json_decode($value);
+						$arr = json_decode($value);	
 						foreach ( $arr as $iterator) {
 							if (isset($iterator->text) && $iterator->text != '') $iterator->text = get_locale ($alias, $iterator->text, $_POST['lang']);
+							
+							if ( isset($iterator->renderer) && $iterator->renderer !='' ) $iterator->renderer = str_replace('\"', '', $iterator->renderer);
 						}
 						$row[$key] = json_encode($arr);
 					}

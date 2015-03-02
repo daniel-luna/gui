@@ -35,6 +35,31 @@
 				$row = mysql_fetch_assoc($result);
 			}
 			break;
+		
+		case 'fotografias': 
+			$result	= mysql_query("SELECT * FROM `pro_fotografias` WHERE `id` = " . $_GET['id_value'], $enlace);
+			$row = array();
+			if ( mysql_num_rows($result) > 0)  {
+				$row = mysql_fetch_assoc($result);
+			}
+			break;
+
+		case 'carreras': 
+			$result	= mysql_query("SELECT * FROM `pro_carreras` WHERE `id` = " . $_GET['id_value'], $enlace);
+			$row = array();
+			if ( mysql_num_rows($result) > 0)  {
+				$row = mysql_fetch_assoc($result);
+			}
+			break;
+			
+		case 'tipos_noticia': 
+			$result	= mysql_query("SELECT * FROM `pro_tipos_noticia` WHERE `id` = " . $_GET['id_value'], $enlace);
+			$row = array();
+			if ( mysql_num_rows($result) > 0)  {
+				$row = mysql_fetch_assoc($result);
+			}
+			break;
+			
 			
 		default:
 			$result	= mysql_query("", $enlace);

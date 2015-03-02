@@ -586,6 +586,7 @@ function create_form(data, id_value) {
 		id		: 'winFrm_' + data.com_alias,
 		height	: 400,
 		width	: 400,
+		modal	: true,
 		layout	: 'fit',
 		items	: [guiForm]
 	}).show();
@@ -597,8 +598,8 @@ function create_manual_form(data, id_value) {
 
 	eval(data.formData);
 	
-	if (data.windowData != '' ) eval("var win_opt = {id:'winFrm_alias', layout : 'fit', items : [guiForm], " + data.windowData + " };");
-	else  eval("var win_opt = {id:'winFrm_alias', layout : 'fit', items : [guiForm] };");
+	if (data.windowData != '' ) eval("var win_opt = {id:'winFrm_alias', layout : 'fit', modal: true, items : [guiForm], " + data.windowData + " };");
+	else  eval("var win_opt = {id:'winFrm_alias', layout : 'fit', modal: true, items : [guiForm] };");
 	
 	Ext.create('Ext.window.Window', win_opt ).show();
 	
@@ -650,6 +651,86 @@ function dispatcher ( caller, prj_alias,  com_alias, col_langs, action, id_value
 	
 }
 
+function changeThemes ( sTheme ) {
+	//alert( sTheme );
+	Ext.Ajax.request({
+		url: 'php/session_changes.php',
+		params: { css : sTheme },
+		success: function() {
+					location.reload();
+				},
+		failure: function(){
+			console.log('Theme changing failure');
+		}
+	});
+}
+
+var tbApp =  Ext.create('Ext.toolbar.Toolbar', {
+ 		items: [{
+            // xtype: 'button', // default for Toolbars
+            text: 'Logout',
+            id: 'tb_logout',
+            handler: function() {
+                document.location = 'php/logout.php';
+            }
+        }, {
+            xtype: 'splitbutton',
+            text: 'Selecciona estilo',
+        	menu: new Ext.menu.Menu({
+ 			items: [{
+						text: 'Classic',
+						handler: function () {
+							changeThemes("ext-all");
+						}
+            		},{
+						text: 'Neptune',
+						handler: function () {
+							changeThemes("ext-all-neptune");
+						}
+            		},{
+						text: 'Gray',
+						handler: function () {
+							changeThemes("ext-all-gray");
+						}
+            		},{
+						text: 'Rtl',
+						handler: function () {
+							changeThemes("ext-all-rtl");
+						}
+            		},{
+						text: 'Access',
+						handler: function () {
+							changeThemes("ext-all-access");
+						}
+            		},
+            ]
+            })
+        }
+        /*
+        ,
+        // begin using the right-justified button container
+        '->', // same as { xtype: 'tbfill' }
+        {
+            xtype: 'textfield',
+            name: 'field1',
+            emptyText: 'enter search term'
+        },
+        // add a vertical separator bar between toolbar items
+        '-', // same as {xtype: 'tbseparator'} to create Ext.toolbar.Separator
+        'text 1', // same as {xtype: 'tbtext', text: 'text1'} to create Ext.toolbar.TextItem
+        {
+            xtype: 'tbspacer'
+        }, // same as ' ' to create Ext.toolbar.Spacer
+        'text 2',
+        {
+            xtype: 'tbspacer',
+            width: 50
+        }, // add a 50px space
+        'text 3'
+        */
+        ]
+    });
+    
 // 1. Cargamos los TreeViews a los que el usuario tenga acceso
 var treePanels = new Array();
 
@@ -707,15 +788,7 @@ var guiTabs = Ext.create('Ext.tab.Panel', {
 				  }]
 
 });
-
-var logout_button = Ext.create('Ext.Button', {
-    text: 'Logout',
-    renderTo: Ext.getBody(),
-    handler: function() {
-        document.location = 'php/logout.php';
-    }
-});
-
+ 
 
 Ext.application({
 	name: 'MyApp',
@@ -727,7 +800,7 @@ Ext.application({
 					autoHeight	:	true,
 					border		:	10,
 					region		:	'north',
-					items		:   [logout_button]
+					items		:   [tbApp] 
 				},
 				{
 					border		:	10,

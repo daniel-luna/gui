@@ -1,6 +1,7 @@
 <?php
 	session_start();
 	if ( ! isset($_SESSION['user']) || ($_SESSION['user'] == ''))  header( 'Location: php/login.php' );
+	if ( ! isset($_SESSION['css']) || ($_SESSION['css'] == ''))  $_SESSION['css'] = 'ext-all-neptune';
 
 	include('php/app.php');
 ?>
@@ -9,7 +10,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>GUI</title>
-	<link rel="stylesheet" href="extjs/resources/css/ext-all-neptune.css"/>
+	<link rel="stylesheet" href="extjs/resources/css/<?php echo $_SESSION['css'];?>.css" />
 	<script type="text/javascript" src="extjs/ext-all-debug.js"></script>
 	<script type="text/javascript" src="extjs/locale/ext-lang-<?php echo $_SESSION['idioma'];?>.js"></script>
 	
